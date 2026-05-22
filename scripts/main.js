@@ -17,11 +17,11 @@ import { initI18n } from "./i18n.js";
 
 async function boot() {
   initPageTransition();
-  // Apply translations before text-reading modules (scramble, flip, particle-text)
-  // initialise, so they capture the localised copy.
-  await initI18n();
-  initFlip();
-  initParticleText();
+
+  // Kick i18n off in parallel — the visual / interactive layer doesn't
+  // depend on translations and shouldn't wait for the JSON round-trip.
+  const i18nPromise = initI18n();
+
   initSmoothScroll();
   initParticles();
   initParticleFields();
@@ -30,10 +30,16 @@ async function boot() {
   initMagnetic();
   initWorks();
   initAnimations();
-  initScramble();
   initLightbox();
   initHeroPortrait();
   initCaseCover();
+
+  // Text-reading modules (scramble/flip/particle-text) need the localised
+  // copy in place before they capture it, so they wait for i18n.
+  await i18nPromise;
+  initFlip();
+  initParticleText();
+  initScramble();
 }
 
 if (document.readyState === "loading") {

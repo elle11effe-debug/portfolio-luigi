@@ -1624,6 +1624,13 @@ strong { font-weight: 700; color: var(--fg); }
 .case__gallery > .wide { grid-column: span 2; aspect-ratio: 16 / 8; }
 .case__gallery > .solo { grid-column: 1 / -1; aspect-ratio: auto; }
 .case__gallery > .solo img { object-fit: contain; }
+/* Narrower variant of .solo for renders/mockups that would otherwise
+   take too much vertical real estate when shown at full content width. */
+.case__gallery > .solo--sm {
+  justify-self: center;
+  width: 100%;
+  max-width: 760px;
+}
 .case__gallery > .fit { aspect-ratio: 4 / 5; }
 .case__gallery > .fit img { object-fit: contain; padding: 0.5rem; }
 /* Featured: pagina/spread evidenziato, centrato orizzontalmente, larghezza

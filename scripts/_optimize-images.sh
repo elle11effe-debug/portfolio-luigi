@@ -3,7 +3,7 @@
 # Keeps the original alongside so we can manually verify before deleting.
 
 QUALITY=80
-THRESHOLD_KB=100
+THRESHOLD_KB=10
 
 total_before=0
 total_after=0

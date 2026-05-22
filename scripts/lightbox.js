@@ -3,7 +3,10 @@
  * Keyboard navigation: ESC to close, ←/→ to step through the active gallery group.
  */
 
-const SELECTOR = ".case__gallery figure img, .case__hero--image img";
+const SELECTOR =
+  ".case__gallery figure img, " +
+  ".case__hero--image img, " +
+  ".case__hero--feature figure img";
 
 export function initLightbox() {
   const targets = Array.from(document.querySelectorAll(SELECTOR));
@@ -73,6 +76,13 @@ export function initLightbox() {
   };
 
   const buildGroup = (clicked) => {
+    // Page-wide group opt-in: any element marked [data-lightbox-all] becomes
+    // the navigation scope, so the arrows step through every image inside it
+    // (regardless of which sub-gallery the user clicked into).
+    const all = clicked.closest("[data-lightbox-all]");
+    if (all) {
+      return Array.from(all.querySelectorAll(SELECTOR));
+    }
     const gallery = clicked.closest(".case__gallery");
     if (gallery) return Array.from(gallery.querySelectorAll("figure img"));
     return [clicked];

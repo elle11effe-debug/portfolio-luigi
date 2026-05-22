@@ -1700,6 +1700,7 @@ strong { font-weight: 700; color: var(--fg); }
   border-radius: 10px;
   overflow: hidden;
   border: 0;
+  cursor: zoom-in;
   background:
     radial-gradient(ellipse 80% 80% at 50% 50%, rgba(255, 138, 61, 0.04), transparent 75%),
     var(--bg);
@@ -1715,6 +1716,7 @@ strong { font-weight: 700; color: var(--fg); }
   object-fit: cover;
   opacity: 1;
   mix-blend-mode: normal;
+  transition: transform 1.2s var(--ease-out);
   -webkit-mask-image:
     radial-gradient(circle 180px at var(--mx) var(--my),
       rgba(0, 0, 0, var(--spotlight)) 0%,
@@ -1729,6 +1731,7 @@ strong { font-weight: 700; color: var(--fg); }
     linear-gradient(rgba(0, 0, 0, var(--reveal)), rgba(0, 0, 0, var(--reveal)));
   will-change: mask-image, -webkit-mask-image;
 }
+.case__hero--feature figure:hover img { transform: scale(1.035); }
 @media (max-width: 760px) {
   .case__hero--feature { grid-template-columns: 1fr; }
 }

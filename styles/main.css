@@ -689,9 +689,12 @@ strong { font-weight: 700; color: var(--fg); }
   letter-spacing: -0.04em;
   /* Shrink the headline to the exact width of its text so the gradient
      stops align to the glyphs (otherwise on short titles like "Su di me."
-     the orange end would fall into empty space on the right). */
+     the orange end would fall into empty space on the right). The small
+     padding-right prevents the final period from being clipped by the
+     negative letter-spacing. */
   width: fit-content;
   max-width: 100%;
+  padding-right: 0.12em;
   /* Soft monochrome gradient (warm grey → off-white) — less aggressive than
      the orange version so the headline doesn't compete with the brand colour
      already present everywhere on the page. */
@@ -2156,6 +2159,48 @@ li:hover > .flip .flip__inner {
 .hero__title.is-revealed .line,
 .contact__title.is-revealed .line {
   overflow: visible;
+}
+
+/* =========================================================
+   LANGUAGE TOGGLE (floating IT / EN)
+========================================================= */
+.lang-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 200;
+  display: inline-flex;
+  gap: 0;
+  background: rgba(20, 11, 8, 0.78);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 0.28rem;
+  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.lang-toggle__btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--fg-grey);
+  padding: 0.42rem 0.95rem;
+  border-radius: 999px;
+  transition: color 0.3s ease, background 0.3s ease;
+  text-transform: uppercase;
+}
+.lang-toggle__btn:hover { color: var(--fg); }
+.lang-toggle__btn.is-active {
+  background: var(--accent);
+  color: var(--bg);
+}
+@media (max-width: 760px) {
+  .lang-toggle { bottom: 1rem; right: 1rem; padding: 0.22rem; }
+  .lang-toggle__btn { padding: 0.35rem 0.7rem; font-size: 10px; }
 }
 
 /* =========================================================

@@ -7,6 +7,8 @@ export function initSmoothScroll() {
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
   });
+  // Exposed so the i18n reload can sync scroll restoration with Lenis state.
+  window.__lenis = lenis;
 
   function raf(time) {
     lenis.raf(time);

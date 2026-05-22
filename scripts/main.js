@@ -13,9 +13,13 @@ import { initParticleText } from "./particle-text.js";
 import { initLightbox } from "./lightbox.js";
 import { initHeroPortrait } from "./hero-portrait.js";
 import { initCaseCover } from "./case-cover.js";
+import { initI18n } from "./i18n.js";
 
-function boot() {
+async function boot() {
   initPageTransition();
+  // Apply translations before text-reading modules (scramble, flip, particle-text)
+  // initialise, so they capture the localised copy.
+  await initI18n();
   initFlip();
   initParticleText();
   initSmoothScroll();

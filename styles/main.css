@@ -476,7 +476,11 @@ strong { font-weight: 700; color: var(--fg); }
   display: block;
 }
 
-/* Portrait — scroll-driven fade-in (handled by hero-portrait.js) */
+/* Portrait — scroll-driven fade-in (handled by hero-portrait.js).
+   Opacity lives on the container (not just the <picture>) so the dark
+   fade overlays (::before / ::after) fade in WITH the photo. Otherwise
+   at scrollY=0 those solid gradients render on top of the hero's
+   warm radial bg and create a visible dark rectangle in the top-right. */
 .hero__portrait {
   position: absolute;
   right: max(var(--container), 1rem);
@@ -486,13 +490,13 @@ strong { font-weight: 700; color: var(--fg); }
   z-index: 1;
   pointer-events: none;
   overflow: hidden;
+  opacity: 0;
+  will-change: opacity;
 }
 .hero__portrait picture {
   display: block;
   width: 100%;
   height: 100%;
-  opacity: 0;
-  will-change: opacity;
   filter: brightness(1.08) contrast(1.05);
 }
 .hero__portrait img {

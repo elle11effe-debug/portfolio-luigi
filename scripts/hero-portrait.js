@@ -8,9 +8,11 @@ const MAX_OPACITY = 0.85;
 const FADE_DISTANCE = 0.35; // fraction of viewport height over which the fade completes
 
 export function initHeroPortrait() {
-  // Target the inner <picture> so the bottom/top fade overlays
-  // (.hero__portrait::before/::after) always render at full opacity.
-  const portrait = document.querySelector(".hero__portrait picture");
+  // Target the container so the photo AND its top/bottom gradient overlays
+  // fade in together — fading just the <picture> leaves the dark mask
+  // gradients visible on top of the hero bg before any scroll happens,
+  // producing a stray dark rectangle in the top-right corner.
+  const portrait = document.querySelector(".hero__portrait");
   if (!portrait) return;
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

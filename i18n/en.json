@@ -15,11 +15,6 @@
     "cv_badge": "Visual CV",
     "role_left": "ART DIRECTOR",
     "role_right": "AI CREATIVE DESIGNER",
-    "tag_1": "Brand Identity",
-    "tag_2": "Social Media Design",
-    "tag_3": "Motion Graphics",
-    "tag_4": "Digital Advertising",
-    "tag_5": "AI Creative Production",
     "scroll": "scroll"
   },
   "stats": {
@@ -34,7 +29,7 @@
     "label_subs": "New app subscriptions"
   },
   "works": {
-    "index": "01 · Selected work",
+    "index": "02 · Selected work",
     "title_w1": "Selected",
     "title_w2": "work.",
     "tag_spoki": "Art direction · 2024–2026",
@@ -45,7 +40,7 @@
     "tag_brands": "Motion graphics archive · 2020–present"
   },
   "about": {
-    "index": "02 · Creative journey",
+    "index": "01 · Creative journey",
     "title_w1": "About",
     "title_w2": "me.",
     "lead_strong": "I'm Luigi Franco.",

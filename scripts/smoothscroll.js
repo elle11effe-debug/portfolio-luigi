@@ -31,5 +31,29 @@ export function initSmoothScroll() {
     });
   });
 
+  // Recompute the scrollable height when lazy-loaded media changes the
+  // document size — otherwise Lenis caps scroll at the old (smaller) height
+  // and pages with many lazy images become impossible to scroll all the way
+  // down.
+  let resizeTimer = null;
+  const refreshScroll = () => {
+    if (resizeTimer) cancelAnimationFrame(resizeTimer);
+    resizeTimer = requestAnimationFrame(() => {
+      lenis.resize?.();
+      window.ScrollTrigger?.refresh();
+    });
+  };
+
+  document.querySelectorAll("img").forEach((img) => {
+    if (img.complete) return;
+    img.addEventListener("load", refreshScroll, { once: true });
+    img.addEventListener("error", refreshScroll, { once: true });
+  });
+  document.querySelectorAll("video").forEach((v) => {
+    v.addEventListener("loadedmetadata", refreshScroll, { once: true });
+  });
+  window.addEventListener("load", refreshScroll);
+  window.addEventListener("resize", refreshScroll);
+
   return lenis;
 }

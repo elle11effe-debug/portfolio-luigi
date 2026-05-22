@@ -2162,45 +2162,99 @@ li:hover > .flip .flip__inner {
 }
 
 /* =========================================================
-   LANGUAGE TOGGLE (floating IT / EN)
+   LANGUAGE TOGGLE — floating bubble (IT / EN swap)
 ========================================================= */
 .lang-toggle {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: 2rem;
+  right: 2rem;
   z-index: 200;
-  display: inline-flex;
-  gap: 0;
-  background: rgba(20, 11, 8, 0.78);
-  backdrop-filter: blur(14px) saturate(120%);
-  -webkit-backdrop-filter: blur(14px) saturate(120%);
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  padding: 0.28rem;
-  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.55);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-}
-.lang-toggle__btn {
-  appearance: none;
-  background: transparent;
+  width: 66px;
+  height: 66px;
+  padding: 0;
   border: 0;
-  color: var(--fg-grey);
-  padding: 0.42rem 0.95rem;
-  border-radius: 999px;
-  transition: color 0.3s ease, background 0.3s ease;
-  text-transform: uppercase;
+  background: transparent;
+  cursor: pointer;
 }
-.lang-toggle__btn:hover { color: var(--fg); }
-.lang-toggle__btn.is-active {
-  background: var(--accent);
+.lang-toggle__bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 11, 8, 0.32);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  box-shadow:
+    0 24px 60px -16px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 32px rgba(255, 138, 61, 0.14);
+  animation: lang-bubble-float 6s ease-in-out infinite;
+  transition:
+    background 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+  will-change: transform;
+}
+.lang-toggle:hover .lang-toggle__bubble {
+  background: rgba(255, 138, 61, 0.18);
+  border-color: rgba(255, 138, 61, 0.32);
+  box-shadow:
+    0 28px 80px -16px rgba(255, 138, 61, 0.45),
+    0 0 0 1px rgba(255, 138, 61, 0.28) inset,
+    0 0 48px rgba(255, 138, 61, 0.32);
+}
+.lang-toggle__face {
+  position: relative;
+  width: 30px;
+  height: 18px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--fg);
+}
+.lang-toggle__current,
+.lang-toggle__target {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.4s var(--ease-out),
+    opacity 0.35s ease;
+}
+.lang-toggle__target {
+  transform: translateY(120%);
+  opacity: 0;
   color: var(--bg);
+  text-shadow: 0 0 12px rgba(255, 138, 61, 0.6);
 }
+.lang-toggle:hover .lang-toggle__current {
+  transform: translateY(-120%);
+  opacity: 0;
+}
+.lang-toggle:hover .lang-toggle__target {
+  transform: translateY(0);
+  opacity: 1;
+  color: var(--fg);
+}
+
+@keyframes lang-bubble-float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33%      { transform: translateY(-7px) translateX(2px); }
+  66%      { transform: translateY(-3px) translateX(-2px); }
+}
+
 @media (max-width: 760px) {
-  .lang-toggle { bottom: 1rem; right: 1rem; padding: 0.22rem; }
-  .lang-toggle__btn { padding: 0.35rem 0.7rem; font-size: 10px; }
+  .lang-toggle { width: 56px; height: 56px; bottom: 1.25rem; right: 1.25rem; }
+  .lang-toggle__face { width: 26px; height: 16px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lang-toggle__bubble { animation: none; }
 }
 
 /* =========================================================

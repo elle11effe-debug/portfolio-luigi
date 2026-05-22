@@ -103,15 +103,20 @@ function writeText(el, value) {
     }
   }
   if (el.classList.contains("has-goo")) {
-    el.innerHTML = "";
-    for (const c of [...value]) {
-      const span = document.createElement("span");
-      span.className = "goo-letter";
-      span.textContent = c === " " ? "\u00A0" : c;
-      el.appendChild(span);
-    }
-    if (typeof window.__particleTextRefresh === "function") {
-      requestAnimationFrame(() => window.__particleTextRefresh());
+    // Use particle-text's surgical rebuild so its internal `groups` array
+    // gets re-pointed at the new spans — otherwise the liquid hover effect
+    // keeps trying to animate the old (now detached) letters and the
+    // cursor reactivity is silently lost.
+    if (typeof window.__particleTextRebuild === "function") {
+      window.__particleTextRebuild(el, value);
+    } else {
+      el.innerHTML = "";
+      for (const c of [...value]) {
+        const span = document.createElement("span");
+        span.className = "goo-letter";
+        span.textContent = c === " " ? "\u00A0" : c;
+        el.appendChild(span);
+      }
     }
     return;
   }

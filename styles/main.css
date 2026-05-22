@@ -420,7 +420,7 @@ strong { font-weight: 700; color: var(--fg); }
   justify-content: flex-start;
   gap: 0.7rem;
   font-family: var(--font-display);
-  font-size: clamp(15px, 1.3vw, 21px);
+  font-size: clamp(18px, 1.7vw, 28px);
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -530,40 +530,6 @@ strong { font-weight: 700; color: var(--fg); }
 .hero > .hero__tagline {
   position: relative;
   z-index: 2;
-}
-
-.hero__scroll {
-  position: absolute;
-  left: 50%;
-  bottom: 2rem;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--fg-dim);
-}
-.hero__scroll .line-anim {
-  width: 36px; height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-.hero__scroll .line-anim::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  transform: translateX(-100%);
-  animation: scrollHint 2.4s var(--ease-out) infinite;
-}
-@keyframes scrollHint {
-  0% { transform: translateX(-100%); }
-  60% { transform: translateX(0%); }
-  100% { transform: translateX(100%); }
 }
 
 /* Medium screens (laptop): anchor portrait to top-right so the face
@@ -2177,6 +2143,7 @@ li:hover > .flip .flip__inner {
   cursor: pointer;
 }
 .lang-toggle__bubble {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2189,14 +2156,41 @@ li:hover > .flip .flip__inner {
   -webkit-backdrop-filter: blur(28px) saturate(160%);
   box-shadow:
     0 24px 60px -16px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 0 32px rgba(255, 138, 61, 0.14);
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   animation: lang-bubble-float 6s ease-in-out infinite;
   transition:
     background 0.45s ease,
     border-color 0.45s ease,
     box-shadow 0.45s ease;
   will-change: transform;
+}
+/* Pulsing accent glow: lives behind the bubble so it doesn't fight the
+   hover box-shadow override. Uses a radial gradient so the falloff is
+   organic rather than a flat ring. */
+.lang-toggle__bubble::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 138, 61, 0.55) 0%,
+    rgba(255, 138, 61, 0.18) 45%,
+    rgba(255, 138, 61, 0) 72%
+  );
+  pointer-events: none;
+  z-index: -1;
+  animation: lang-bubble-pulse 2.6s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+.lang-toggle:hover .lang-toggle__bubble::before {
+  animation-duration: 1.4s;
+  background: radial-gradient(
+    circle,
+    rgba(255, 138, 61, 0.8) 0%,
+    rgba(255, 138, 61, 0.3) 50%,
+    rgba(255, 138, 61, 0) 75%
+  );
 }
 .lang-toggle:hover .lang-toggle__bubble {
   background: rgba(255, 138, 61, 0.18);
@@ -2248,13 +2242,18 @@ li:hover > .flip .flip__inner {
   33%      { transform: translateY(-7px) translateX(2px); }
   66%      { transform: translateY(-3px) translateX(-2px); }
 }
+@keyframes lang-bubble-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50%      { opacity: 1;    transform: scale(1.18); }
+}
 
 @media (max-width: 760px) {
   .lang-toggle { width: 56px; height: 56px; bottom: 1.25rem; right: 1.25rem; }
   .lang-toggle__face { width: 26px; height: 16px; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lang-toggle__bubble { animation: none; }
+  .lang-toggle__bubble,
+  .lang-toggle__bubble::before { animation: none; }
 }
 
 /* =========================================================

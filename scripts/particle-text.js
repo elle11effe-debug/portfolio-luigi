@@ -281,4 +281,35 @@ export function initParticleText() {
   setTimeout(updateRects, 1900);
 
   window.__particleTextRefresh = updateRects;
+
+  // Surgical rebuild for a single element (used by the i18n morph when the
+  // string actually changes between languages). Replaces the goo-letter spans
+  // AND patches the closure-bound `groups` entry so the animation loop keeps
+  // operating on the live nodes instead of the detached old ones.
+  window.__particleTextRebuild = function (el, newText) {
+    const g = groups.find((gr) => gr.el === el);
+    if (!g) return;
+    el.innerHTML = "";
+    const letters = [];
+    for (const c of [...newText]) {
+      const span = document.createElement("span");
+      span.className = "goo-letter";
+      span.textContent = c === " " ? "\u00A0" : c;
+      el.appendChild(span);
+      letters.push({
+        span,
+        hx: 0, hy: 0,
+        offX: 0, offY: 0,
+        prox: 0,
+        velX: 0, velY: 0,
+        curX: 0, curY: 0,
+        z: 0,
+        hadBlur: false,
+        hadGlow: false,
+      });
+    }
+    g.letters = letters;
+    rectsReady = false;
+    requestAnimationFrame(() => updateRects());
+  };
 }

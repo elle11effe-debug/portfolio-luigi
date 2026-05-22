@@ -1787,8 +1787,20 @@ strong { font-weight: 700; color: var(--fg); }
   will-change: mask-image, -webkit-mask-image;
 }
 .case__hero--feature figure:hover img { transform: scale(1.035); }
+/* Two-image variant of the feature hero — same spotlight + lightbox
+   behaviour. Capped at a narrower max-width and centred so paired
+   portrait visuals don't dominate the page like a hero would. */
+.case__hero--duo {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 720px;
+  margin-inline: auto;
+}
 @media (max-width: 760px) {
   .case__hero--feature { grid-template-columns: 1fr; }
+  .case__hero--duo {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
 }
 
 /* Art-piece hero: single artwork shown at natural ratio, centered on a warm spotlight */

@@ -1496,6 +1496,11 @@ strong { font-weight: 700; color: var(--fg); }
    CASE STUDY
 ========================================================= */
 .case {
+  /* Cap the article width on large monitors so hero banners and gallery
+     tiles don't grow unbounded on 27"/4K screens. 1400px keeps things
+     comfortably reading-sized while leaving generous side margins. */
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 8rem var(--container) 4rem;
   position: relative;
 }

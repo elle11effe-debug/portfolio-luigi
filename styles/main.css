@@ -601,9 +601,9 @@ strong { font-weight: 700; color: var(--fg); }
     height: clamp(400px, 60vh, 500px);
     z-index: 0;
   }
-  /* 165% pushes the image roughly halfway off the container's bottom,
-     which lowers the visible head into the bottom half of the hero. */
-  .hero__portrait img { object-position: center 165%; }
+  /* 140% lifts the head a bit compared to 165% so the eyes stay clear
+     of the role text while the chin still sits low in the hero. */
+  .hero__portrait img { object-position: center 140%; }
   /* Soft top fade so the cut-out head melts into the page bg even
      if the user scrolls and the photo gets revealed. */
   .hero__portrait::before {

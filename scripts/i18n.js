@@ -18,7 +18,10 @@
 
 const STORAGE_KEY = "lf-lang";
 const SUPPORTED = ["it", "en"];
-const DEFAULT_LANG = "it";
+// First-visit language. We intentionally default to English (regardless of
+// browser locale) so the global audience lands on EN; visitors who prefer
+// Italian can switch via the toggle and their choice is then persisted.
+const DEFAULT_LANG = "en";
 
 // Total morph duration. First half = glitch ramps up to peak chaos on the
 // CURRENT text. Second half = chaos resolves into the NEW text. The
@@ -36,11 +39,12 @@ let morphing = false;
 const listeners = new Set();
 
 function detectInitialLang() {
+  // Honour an explicit user choice from a previous visit; otherwise fall
+  // back to DEFAULT_LANG (English) — we deliberately ignore navigator.language
+  // so the first impression is always EN, even for Italian browsers.
   const saved = localStorage.getItem(STORAGE_KEY);
   if (SUPPORTED.includes(saved)) return saved;
-  const browser = (navigator.language || "").toLowerCase();
-  if (browser.startsWith("it")) return "it";
-  return "en";
+  return DEFAULT_LANG;
 }
 
 async function loadDictionary(lang) {

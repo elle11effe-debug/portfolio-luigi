@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Local backups (these are zipped to Desktop, no need on the remote)
+*.zip
+Sito-Portfolio_backup_*
+
+# Editor / OS junk
+.vscode/
+.idea/
+Thumbs.db
+
+# Node (kept just in case anything ever adds it)
+node_modules/
+
+# Logs & temp
+*.log
+.tmp/

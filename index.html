@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0604" />
+  <title>Luigi Franco — Art Director & AI Creative Designer</title>
+  <meta name="description" content="Portfolio di Luigi Franco — Art Director e AI Creative Designer. Brand identity, social media design, motion graphics, digital advertising e AI creative production." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles/reset.css" />
+  <link rel="stylesheet" href="styles/variables.css" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <div class="page-transition" aria-hidden="true">
+    <div class="page-transition__brand">
+      <span class="mark">LF</span>
+      <span>Luigi Franco</span>
+    </div>
+  </div>
+
+  <canvas class="particles" aria-hidden="true"></canvas>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="blob" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+    <span class="cursor__label"></span>
+  </div>
+
+  <header class="nav">
+    <a href="#top" class="nav__logo" data-magnetic data-cursor="logo">
+      <span class="nav__logo-mark">LF</span>
+      <span class="nav__logo-text">Luigi Franco</span>
+    </a>
+    <nav class="nav__links" aria-label="Navigazione principale">
+      <a href="#lavori" data-magnetic data-cursor><span>Lavori</span></a>
+      <a href="#about" data-magnetic data-cursor><span>About</span></a>
+      <a href="#tools" data-magnetic data-cursor><span>Tools &amp; AI</span></a>
+      <a href="#contatti" data-magnetic data-cursor><span>Contatti</span></a>
+    </nav>
+    <a href="mailto:elle11effe@gmail.com" class="nav__cta" data-magnetic data-cursor="email">
+      <i class="dot"></i>
+      <span>Disponibile per progetti</span>
+    </a>
+  </header>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="hero__badges">
+        <a class="hero__badge hero__badge--cv" href="assets/files/Luigi-Franco-CV.pdf" download="Luigi-Franco-CV.pdf" data-magnetic data-cursor="download">
+          <i class="dot"></i>
+          <span data-particle-text>Visual CV</span>
+          <span class="hero__badge-arrow" aria-hidden="true">↓</span>
+        </a>
+      </div>
+
+      <h1 class="hero__title" data-split>
+        <span class="hero__title-stack">
+          <span class="line"><span class="word word--light" data-particle-text>LUIGI</span></span>
+          <span class="line"><span class="word word--black" data-particle-text>FRANCO</span></span>
+        </span>
+      </h1>
+
+      <p class="hero__role">
+        <span class="t-white">ART DIRECTOR</span>
+        <span class="hero__role-sep" aria-hidden="true">·</span>
+        <span class="t-accent">AI CREATIVE DESIGNER</span>
+      </p>
+
+      <p class="hero__tagline">
+        <span class="hero__tagline-row">
+          <span class="hero__tagline-item">Brand Identity</span>
+          <span class="hero__tagline-item">Social Media Design</span>
+          <span class="hero__tagline-item">Motion Graphics</span>
+        </span>
+        <span class="hero__tagline-row">
+          <span class="hero__tagline-item">Digital Advertising</span>
+          <span class="hero__tagline-item">AI Creative Production</span>
+        </span>
+      </p>
+
+      <div class="hero__visual" aria-hidden="true">
+        <canvas class="hero__canvas"></canvas>
+      </div>
+
+      <div class="hero__portrait" aria-hidden="true">
+        <picture>
+          <source srcset="assets/portrait/luigi-cutout.webp" type="image/webp" />
+          <img src="assets/portrait/luigi-cutout.png" alt="" loading="eager" decoding="async" />
+        </picture>
+      </div>
+
+      <div class="hero__scroll" aria-hidden="true">
+        <span>scroll</span>
+        <div class="line-anim"></div>
+      </div>
+    </section>
+
+    <section class="marquee">
+      <div class="marquee__track">
+        <span class="marquee__item" data-particle-text="dynamic">Brand Identity</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Social Media Design</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Motion Graphics</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Digital Advertising</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">AI Creative Production</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Editorial Design</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Brand Identity</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Social Media Design</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Motion Graphics</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Digital Advertising</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">AI Creative Production</span><span class="dot-sep"></span>
+        <span class="marquee__item" data-particle-text="dynamic">Editorial Design</span><span class="dot-sep"></span>
+      </div>
+    </section>
+
+    <section class="stats">
+      <header class="section-head">
+        <span class="section-head__index"><i class="dot"></i> · Impact numbers</span>
+        <h2 class="section-head__title">
+          <span class="t-white">Risultati</span> <span class="t-grey">misurabili.</span>
+        </h2>
+      </header>
+
+      <div class="stats__grid">
+        <article class="stat-card">
+          <span class="stat-card__value" data-particle-text>+24%</span>
+          <span class="stat-card__label">Social followers growth</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__value" data-particle-text>+21%</span>
+          <span class="stat-card__label">Brand awareness growth</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__value" data-particle-text>+37%</span>
+          <span class="stat-card__label">Video engagement increase</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__value" data-particle-text>€&nbsp;288K</span>
+          <span class="stat-card__label">Additional product sales</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__value" data-particle-text>+35%</span>
+          <span class="stat-card__label">Lead acquisition increase</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-card__value" data-particle-text>2.3K+</span>
+          <span class="stat-card__label">New app subscriptions</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="works" id="lavori">
+      <header class="section-head">
+        <span class="section-head__index"><i class="dot"></i> 01 · Selected works</span>
+        <h2 class="section-head__title">
+          <span class="t-white">I miei</span> <span class="t-grey">Lavori.</span>
+        </h2>
+      </header>
+
+      <ul class="works__list" role="list">
+        <li class="work" data-cursor="view">
+          <div class="work__media" aria-hidden="true">
+            <div class="work__image work__image--photo" style="background-image: url('assets/works/spoki/adv-cupido.jpg');"></div>
+          </div>
+          <a href="projects/spoki.html" class="work__link">
+            <span class="work__num">01</span>
+            <h3 class="work__title">Spoki</h3>
+            <span class="work__tags">Art direction · 2024–2026</span>
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+
+        <li class="work" data-cursor="view">
+          <div class="work__media" aria-hidden="true">
+            <div class="work__image work__image--photo" style="background-image: url('assets/works/corriere/prima-lecce-serie-a.jpg');"></div>
+          </div>
+          <a href="projects/corriere-dello-sport.html" class="work__link">
+            <span class="work__num">02</span>
+            <h3 class="work__title">Corriere dello Sport Puglia</h3>
+            <span class="work__tags">Head of Graphics · 2020–present</span>
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+
+        <li class="work" data-cursor="view">
+          <div class="work__media" aria-hidden="true">
+            <div class="work__image work__image--photo" style="background-image: url('assets/works/fantaredazione/identikit-baturina.jpg');"></div>
+          </div>
+          <a href="projects/fantaredazione.html" class="work__link">
+            <span class="work__num">03</span>
+            <h3 class="work__title">Fantaredazione</h3>
+            <span class="work__tags">Art direction · 2024–present</span>
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+
+        <li class="work" data-cursor="view">
+          <div class="work__media" aria-hidden="true">
+            <div class="work__image work__image--photo" style="background-image: url('assets/works/svs/illu-krstovic-how-to-be.jpg');"></div>
+          </div>
+          <a href="projects/sports-visual-storytelling.html" class="work__link">
+            <span class="work__num">04</span>
+            <h3 class="work__title">Sports Visual Storytelling</h3>
+            <span class="work__tags">Editorial · 2023–present</span>
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+
+        <li class="work" data-cursor="view">
+          <div class="work__media" aria-hidden="true">
+            <div class="work__image work__image--photo" style="background-image: url('assets/works/sketchbook/cover-basilica-santa-croce.jpg');"></div>
+          </div>
+          <a href="projects/sketchbook.html" class="work__link">
+            <span class="work__num">05</span>
+            <h3 class="work__title">Sketchbook</h3>
+            <span class="work__tags">Illustrazioni personali · ongoing</span>
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+
+        <li class="work" data-cursor="view">
+          <div class="work__media" aria-hidden="true">
+            <div class="work__image work__image--photo" style="background-image: url('assets/works/brands-motion/posters/citytex.jpg');"></div>
+          </div>
+          <a href="projects/brands-in-motion.html" class="work__link">
+            <span class="work__num">06</span>
+            <h3 class="work__title">Brands in Motion</h3>
+            <span class="work__tags">Motion graphics archive · 2020–present</span>
+            <span class="work__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="about" id="about">
+      <header class="section-head">
+        <span class="section-head__index"><i class="dot"></i> 02 · Creative journey</span>
+        <h2 class="section-head__title">
+          <span class="t-white">Su</span> <span class="t-grey">di me.</span>
+        </h2>
+      </header>
+
+      <div class="about__grid">
+        <div class="about__intro">
+          <p class="about__lead">
+            <span class="t-white">Sono Luigi Franco.</span>
+            <span class="t-grey">Art Director e AI Creative Designer focalizzato su brand identity, social media, motion graphics e digital advertising.</span>
+          </p>
+          <p>
+            Creo sistemi visivi che trasformano gli obiettivi di business in contenuti riconoscibili e performanti, unendo direzione creativa, design data-driven e workflow di AI generativa.
+          </p>
+          <p>
+            9+ anni di esperienza, un workflow AI-powered che velocizza ogni fase — dall'ideazione alla produzione — senza sacrificare la qualità della direzione artistica.
+          </p>
+          <p class="about__cta-line">CREATIVE DNA · AI-POWERED CREATIVE WORKFLOW</p>
+        </div>
+
+        <aside class="about__side">
+          <div class="about__block">
+            <h4><i class="dot"></i> Spoki</h4>
+            <p class="about__role">Art Director · Jan 2024 — May 2026</p>
+            <p class="about__desc">Direzione visiva, social content, motion graphics, digital advertising e workflow creativi AI-assisted per una tech company in forte crescita.</p>
+          </div>
+          <div class="about__block">
+            <h4><i class="dot"></i> Corriere dello Sport Puglia</h4>
+            <p class="about__role">Head of Graphics · May 2020 — Present</p>
+            <p class="about__desc">Editorial design, sports visual storytelling e produzione grafica continuativa.</p>
+          </div>
+          <div class="about__block">
+            <h4><i class="dot"></i> Fantaredazione</h4>
+            <p class="about__role">Art Director · Apr 2024 — Present</p>
+            <p class="about__desc">Sports content virali, campagne pubblicitarie e visual di crescita per l'app.</p>
+          </div>
+
+          <div class="about__meta">
+            <div>
+              <h5>Education</h5>
+              <p>B.A. Graphic Design — ASA Lecce<br><span class="t-grey">Final Grade 107/110</span></p>
+            </div>
+            <div>
+              <h5>Languages</h5>
+              <p>Italian <span class="t-grey">Native</span><br>English <span class="t-grey">Fluent</span></p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tools" id="tools">
+      <header class="section-head">
+        <span class="section-head__index"><i class="dot"></i> 03 · Tools &amp; AI stack</span>
+        <h2 class="section-head__title">
+          <span class="t-white">Stack</span> <span class="t-grey">creativo.</span>
+        </h2>
+      </header>
+
+      <div class="tools__grid">
+        <article class="tools__card">
+          <h4><i class="dot"></i> Suite Adobe</h4>
+          <ul class="tools__pills" role="list">
+            <li>Ai</li><li>Ps</li><li>Pr</li><li>Ae</li><li>Id</li><li>Figma</li>
+          </ul>
+        </article>
+        <article class="tools__card">
+          <h4><i class="dot"></i> AI Generative</h4>
+          <ul class="tools__pills" role="list">
+            <li>Runway</li><li>HeyGen</li><li>Suno</li><li>Flux</li>
+            <li>Nano Banana Pro 2</li>
+            <li class="tools__pills-break" aria-hidden="true"></li>
+            <li>Seedance 2</li><li>Magnific</li>
+            <li>Cursor</li><li>ElevenLabs</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="contact" id="contatti">
+      <div class="contact__visual" aria-hidden="true">
+        <canvas class="contact__canvas"></canvas>
+      </div>
+
+      <span class="section-head__index"><i class="dot"></i> 04 · Contact</span>
+
+      <h2 class="contact__title" data-split>
+        <span class="line"><span class="word t-white" data-scramble>Hai</span> <span class="word t-white" data-scramble>un</span> <span class="word t-white" data-scramble>progetto</span></span>
+        <span class="line"><span class="word t-grey" data-scramble>in</span> <span class="word t-grey" data-scramble>mente?</span></span>
+      </h2>
+
+      <a href="mailto:elle11effe@gmail.com" class="contact__mail" data-magnetic data-cursor="email">
+        <span>elle11effe@gmail.com</span>
+      </a>
+
+      <p class="contact__sub">SCRIVIMI</p>
+
+      <div class="contact__info">
+        <a href="tel:+393891952969" class="contact__info-item" data-magnetic data-cursor>
+          <span class="contact__info-label">Phone</span>
+          <span class="contact__info-value">+39 389 195 2969</span>
+        </a>
+        <a href="https://www.linkedin.com/in/luigi-franco-6779b9178" target="_blank" rel="noopener" class="contact__info-item" data-magnetic data-cursor>
+          <span class="contact__info-label">LinkedIn</span>
+          <span class="contact__info-value">Luigi Franco</span>
+        </a>
+        <a href="https://www.instagram.com/il_dodicesimo_uomo/" target="_blank" rel="noopener" class="contact__info-item" data-magnetic data-cursor>
+          <span class="contact__info-label">Instagram</span>
+          <span class="contact__info-value">@il_dodicesimo_uomo</span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer__row">
+        <span>© 2026 Luigi Franco · All rights reserved</span>
+        <span class="footer__center">Designed &amp; coded with AI workflow</span>
+        <a href="#top" data-magnetic data-cursor="up"><span data-flip>Torna su ↑</span></a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js"
+    }
+  }
+  </script>
+  <script type="module" src="scripts/main.js"></script>
+</body>
+</html>

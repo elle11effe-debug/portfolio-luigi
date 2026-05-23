@@ -552,14 +552,22 @@ strong { font-weight: 700; color: var(--fg); }
   z-index: 2;
 }
 
-/* Medium screens (laptop): anchor portrait to top-right so the face
-   sits above the huge title instead of being covered by it */
+/* Medium screens (laptop): anchor portrait to top-right and let it
+   grow large enough that its left edge crosses into the title area.
+   Because .hero__portrait sits at z-index:1 and .hero__title at z-index:2,
+   the title always reads cleanly on top and the photo becomes a soft
+   layered backdrop that "emerges" from behind the typography. */
 @media (min-width: 901px) and (max-width: 1400px) {
   .hero__portrait {
-    top: 6rem;
+    top: 4.5rem;
     bottom: auto;
-    width: clamp(280px, 34vw, 440px);
-    height: clamp(420px, 72vh, 600px);
+    /* Cuddle the right edge of the viewport a bit harder than the
+       default container gutter, so the extra width can spread leftward
+       into the LUIGI / FRANCO words instead of being absorbed on the
+       right margin. */
+    right: max(calc(var(--container) * 0.4), 0.5rem);
+    width: clamp(420px, 48vw, 620px);
+    height: clamp(520px, 86vh, 740px);
   }
   .hero__portrait img {
     object-position: top center;

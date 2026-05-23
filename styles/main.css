@@ -512,17 +512,20 @@ strong { font-weight: 700; color: var(--fg); }
 /* Soft radial feather on ALL four edges of the portrait container so the
    subtle halo around the cutout PNG (introduced by the brightness/contrast
    filter below) never reads as a hard rectangle when the photo is faded in.
-   The mask keeps the centre fully opaque (where the face lives) and dissolves
-   the empty padding around the silhouette into the page bg. */
-.hero__portrait {
-  -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 55%,
-    #000 55%,
-    rgba(0, 0, 0, 0.85) 75%,
-    rgba(0, 0, 0, 0) 100%);
-          mask-image: radial-gradient(ellipse 75% 80% at 50% 55%,
-    #000 55%,
-    rgba(0, 0, 0, 0.85) 75%,
-    rgba(0, 0, 0, 0) 100%);
+   Scoped to non-mobile widths because on phones the photo is anchored
+   off-centre via object-position and a centred mask would crop the face;
+   the mobile layout already hides container edges through positioning. */
+@media (min-width: 901px) {
+  .hero__portrait {
+    -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 55%,
+      #000 55%,
+      rgba(0, 0, 0, 0.85) 75%,
+      rgba(0, 0, 0, 0) 100%);
+            mask-image: radial-gradient(ellipse 75% 80% at 50% 55%,
+      #000 55%,
+      rgba(0, 0, 0, 0.85) 75%,
+      rgba(0, 0, 0, 0) 100%);
+  }
 }
 .hero__portrait picture {
   display: block;
@@ -623,13 +626,6 @@ strong { font-weight: 700; color: var(--fg); }
     width: min(72vw, 290px);
     height: clamp(400px, 60vh, 500px);
     z-index: 0;
-    /* The desktop radial-feather mask is anchored at 55% from top, which on
-       mobile would crop right through the face (the photo is pushed up via
-       object-position: center 140%). The mobile layout already hides the
-       container's edges through positioning + the ::before fade, so we
-       simply opt out of the mask here. */
-    -webkit-mask-image: none;
-            mask-image: none;
   }
   /* 140% lifts the head a bit compared to 165% so the eyes stay clear
      of the role text while the chin still sits low in the hero. */

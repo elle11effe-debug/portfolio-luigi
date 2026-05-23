@@ -1372,7 +1372,72 @@ strong { font-weight: 700; color: var(--fg); }
   font-weight: 600;
   letter-spacing: 0.18em;
   color: var(--fg-grey);
-  margin-bottom: 3.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Secondary mailboxes (info@ + hello@). The primary "work@" stays in
+   .contact__mail as the big hero email; these two sit below as a clear
+   pair so visitors know which address to use for what. Same glass-card
+   feel as .contact__info-item, but tuned for the longer email strings. */
+.contact__mailboxes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 720px;
+  margin: 0 auto 3.5rem;
+}
+.contact__mailbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: var(--radius-card);
+  background: var(--bg-glass);
+  border: 1px solid var(--line-strong);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-align: center;
+  transition:
+    border-color 0.4s var(--ease-out),
+    background 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
+}
+.contact__mailbox:hover {
+  border-color: var(--accent);
+  background: rgba(255, 94, 31, 0.08);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+.contact__mailbox-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-grey);
+}
+.contact__mailbox-address {
+  font-family: var(--font-sans);
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  display: inline-block;
+  will-change: transform;
+  transition:
+    transform 0.4s cubic-bezier(0.7, 0, 0.2, 1),
+    text-shadow 0.4s ease;
+  /* Long addresses must wrap on narrow viewports rather than blow the
+     card width — break only on the @ to keep the local-part intact. */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.contact__mailbox:hover .contact__mailbox-address {
+  transform: translateY(-2px);
+  text-shadow: 0 0 18px var(--accent-glow);
+}
+
+@media (max-width: 600px) {
+  .contact__mailboxes { grid-template-columns: 1fr; }
 }
 
 .contact__info {

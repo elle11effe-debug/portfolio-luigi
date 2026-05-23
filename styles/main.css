@@ -627,9 +627,11 @@ strong { font-weight: 700; color: var(--fg); }
     height: clamp(460px, 68vh, 580px);
     z-index: 0;
   }
-  /* 140% lifts the head a bit compared to 165% so the eyes stay clear
-     of the role text while the chin still sits low in the hero. */
-  .hero__portrait img { object-position: center 140%; }
+  /* Push the cut-out down so the eyes sit below the role text instead of
+     getting overlapped by "AI CREATIVE DESIGNER". The container is bottom-
+     anchored and clips the overflow, so values >100% slide the face down
+     within the visible area. */
+  .hero__portrait img { object-position: center 185%; }
   /* Soft top fade so the cut-out head melts into the page bg even
      if the user scrolls and the photo gets revealed. */
   .hero__portrait::before {

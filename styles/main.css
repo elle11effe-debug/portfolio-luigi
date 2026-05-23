@@ -509,6 +509,21 @@ strong { font-weight: 700; color: var(--fg); }
   opacity: 0;
   will-change: opacity;
 }
+/* Soft radial feather on ALL four edges of the portrait container so the
+   subtle halo around the cutout PNG (introduced by the brightness/contrast
+   filter below) never reads as a hard rectangle when the photo is faded in.
+   The mask keeps the centre fully opaque (where the face lives) and dissolves
+   the empty padding around the silhouette into the page bg. */
+.hero__portrait {
+  -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 55%,
+    #000 55%,
+    rgba(0, 0, 0, 0.85) 75%,
+    rgba(0, 0, 0, 0) 100%);
+          mask-image: radial-gradient(ellipse 75% 80% at 50% 55%,
+    #000 55%,
+    rgba(0, 0, 0, 0.85) 75%,
+    rgba(0, 0, 0, 0) 100%);
+}
 .hero__portrait picture {
   display: block;
   width: 100%;
@@ -559,7 +574,7 @@ strong { font-weight: 700; color: var(--fg); }
    layered backdrop that "emerges" from behind the typography. */
 @media (min-width: 901px) and (max-width: 1400px) {
   .hero__portrait {
-    top: 4.5rem;
+    top: 8rem;
     bottom: auto;
     /* Cuddle the right edge of the viewport a bit harder than the
        default container gutter, so the extra width can spread leftward
@@ -608,6 +623,13 @@ strong { font-weight: 700; color: var(--fg); }
     width: min(72vw, 290px);
     height: clamp(400px, 60vh, 500px);
     z-index: 0;
+    /* The desktop radial-feather mask is anchored at 55% from top, which on
+       mobile would crop right through the face (the photo is pushed up via
+       object-position: center 140%). The mobile layout already hides the
+       container's edges through positioning + the ::before fade, so we
+       simply opt out of the mask here. */
+    -webkit-mask-image: none;
+            mask-image: none;
   }
   /* 140% lifts the head a bit compared to 165% so the eyes stay clear
      of the role text while the chin still sits low in the hero. */

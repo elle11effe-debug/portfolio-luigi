@@ -81,6 +81,24 @@ function ensureCtx() {
 }
 
 /**
+ * Run `fn` once the AudioContext is guaranteed to be in the "running"
+ * state. The whole point: ctx.resume() is asynchronous, so on the very
+ * first click anywhere on the page the context goes from "suspended"
+ * to "running" only AFTER the promise resolves. If we just synchronously
+ * schedule an oscillator inside a fresh suspended-then-resuming context,
+ * the schedule lands in dead air and the user hears nothing — which is
+ * exactly why the first toggle click used to be silent and only the
+ * second one was audible. With this helper, the first sound the user
+ * triggers waits for the resume handshake and then plays, so they hear
+ * confirmation on the very first interaction.
+ */
+function whenReady(fn) {
+  if (!ensureCtx()) return;
+  if (ctx.state === "running") { fn(); return; }
+  ctx.resume().then(fn).catch(() => {});
+}
+
+/**
  * Unlock the AudioContext on the very first user gesture anywhere on
  * the page. Browsers (Chrome/Safari/Firefox) all refuse to let an
  * AudioContext leave the "suspended" state until they've witnessed an
@@ -140,98 +158,111 @@ function osc(type, freq) {
 }
 
 function playHover() {
-  if (!enabled || !ensureCtx()) return;
+  if (!enabled) return;
   const now = performance.now();
   if (now - lastHoverAt < HOVER_THROTTLE_MS) return;
   lastHoverAt = now;
 
-  const freq = 1150 + Math.random() * 220; // small pitch variance keeps it organic
-  const g = ctx.createGain();
-  const o = osc("sine", freq);
-  o.connect(g).connect(masterGain);
-  envelope(g, 0.035, 0.004, 0.07);
-  o.start();
-  o.stop(ctx.currentTime + 0.12);
+  whenReady(() => {
+    const freq = 1150 + Math.random() * 220; // small pitch variance keeps it organic
+    const g = ctx.createGain();
+    const o = osc("sine", freq);
+    o.connect(g).connect(masterGain);
+    envelope(g, 0.035, 0.004, 0.07);
+    o.start();
+    o.stop(ctx.currentTime + 0.12);
+  });
 }
 
 function playMagnetic() {
-  if (!enabled || !ensureCtx()) return;
+  if (!enabled) return;
   const now = performance.now();
   if (now - lastHoverAt < HOVER_THROTTLE_MS) return;
   lastHoverAt = now;
 
-  // Two-oscillator dyad — sine + perfect fifth — gives a "warmer"
-  // chime tone vs the plain hover tick, so magnetic UI elements feel
-  // sonically distinct from regular hover targets.
-  const g = ctx.createGain();
-  const o1 = osc("sine", 540 + Math.random() * 40);
-  const o2 = osc("sine", 810);
-  o1.connect(g);
-  o2.connect(g);
-  g.connect(masterGain);
-  envelope(g, 0.032, 0.012, 0.16);
-  o1.start(); o2.start();
-  const end = ctx.currentTime + 0.22;
-  o1.stop(end); o2.stop(end);
+  whenReady(() => {
+    // Two-oscillator dyad — sine + perfect fifth — gives a "warmer"
+    // chime tone vs the plain hover tick, so magnetic UI elements feel
+    // sonically distinct from regular hover targets.
+    const g = ctx.createGain();
+    const o1 = osc("sine", 540 + Math.random() * 40);
+    const o2 = osc("sine", 810);
+    o1.connect(g);
+    o2.connect(g);
+    g.connect(masterGain);
+    envelope(g, 0.032, 0.012, 0.16);
+    o1.start(); o2.start();
+    const end = ctx.currentTime + 0.22;
+    o1.stop(end); o2.stop(end);
+  });
 }
 
 function playClick() {
-  if (!enabled || !ensureCtx()) return;
+  if (!enabled) return;
 
-  // Triangle bass + sine overtone — most "tactile" of the lot, the
-  // sound of a click landing on something solid.
-  const g = ctx.createGain();
-  const o1 = osc("triangle", 320);
-  const o2 = osc("sine", 640);
-  o1.connect(g);
-  o2.connect(g);
-  g.connect(masterGain);
-  envelope(g, 0.055, 0.003, 0.1);
-  o1.start(); o2.start();
-  const end = ctx.currentTime + 0.16;
-  o1.stop(end); o2.stop(end);
+  whenReady(() => {
+    // Triangle bass + sine overtone — most "tactile" of the lot, the
+    // sound of a click landing on something solid.
+    const g = ctx.createGain();
+    const o1 = osc("triangle", 320);
+    const o2 = osc("sine", 640);
+    o1.connect(g);
+    o2.connect(g);
+    g.connect(masterGain);
+    envelope(g, 0.055, 0.003, 0.1);
+    o1.start(); o2.start();
+    const end = ctx.currentTime + 0.16;
+    o1.stop(end); o2.stop(end);
+  });
 }
 
 function playSectionEnter() {
-  if (!enabled || !ensureCtx()) return;
+  if (!enabled) return;
   const now = performance.now();
   if (now - initTime < STARTUP_SILENCE_MS) return;
   if (now - lastSectionAt < SECTION_THROTTLE_MS) return;
   lastSectionAt = now;
 
-  // Low, slow, soft. The "you've arrived somewhere new" cue.
-  const g = ctx.createGain();
-  const o = osc("sine", 180);
-  o.connect(g).connect(masterGain);
-  envelope(g, 0.022, 0.06, 0.28);
-  o.start();
-  o.stop(ctx.currentTime + 0.4);
+  whenReady(() => {
+    // Low, slow, soft. The "you've arrived somewhere new" cue.
+    const g = ctx.createGain();
+    const o = osc("sine", 180);
+    o.connect(g).connect(masterGain);
+    envelope(g, 0.022, 0.06, 0.28);
+    o.start();
+    o.stop(ctx.currentTime + 0.4);
+  });
 }
 
 function playParticleSpark() {
-  if (!enabled || !ensureCtx()) return;
+  if (!enabled) return;
   const now = performance.now();
   if (now - lastParticleAt < PARTICLE_THROTTLE_MS) return;
   lastParticleAt = now;
 
-  // High, brief, twinkly — should feel like a tiny piece of glass
-  // flicking. Fired by particle clusters lighting up under the cursor.
-  const g = ctx.createGain();
-  const o = osc("sine", 2400 + Math.random() * 600);
-  o.connect(g).connect(masterGain);
-  envelope(g, 0.018, 0.002, 0.05);
-  o.start();
-  o.stop(ctx.currentTime + 0.08);
+  whenReady(() => {
+    // High, brief, twinkly — should feel like a tiny piece of glass
+    // flicking. Fired by particle clusters lighting up under the cursor.
+    const g = ctx.createGain();
+    const o = osc("sine", 2400 + Math.random() * 600);
+    o.connect(g).connect(masterGain);
+    envelope(g, 0.018, 0.002, 0.05);
+    o.start();
+    o.stop(ctx.currentTime + 0.08);
+  });
 }
 
 function playToggle(on) {
-  if (!ensureCtx()) return; // always audible, even if currently muted
-  const g = ctx.createGain();
-  const o = osc("sine", on ? 880 : 440);
-  o.connect(g).connect(masterGain);
-  envelope(g, 0.045, 0.005, 0.13);
-  o.start();
-  o.stop(ctx.currentTime + 0.2);
+  // always audible, even if currently muted — the toggle click sound
+  // is the user's confirmation that the action landed
+  whenReady(() => {
+    const g = ctx.createGain();
+    const o = osc("sine", on ? 880 : 440);
+    o.connect(g).connect(masterGain);
+    envelope(g, 0.045, 0.005, 0.13);
+    o.start();
+    o.stop(ctx.currentTime + 0.2);
+  });
 }
 
 function createToggle() {

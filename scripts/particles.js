@@ -10,7 +10,7 @@ export function initParticles() {
   let particles = [];
   let mouseX = -1000, mouseY = -1000;
 
-  const COUNT_BASE = 60;
+  const COUNT_BASE = 80;
 
   const resize = () => {
     w = window.innerWidth;

@@ -1,6 +1,7 @@
 import { initCursor } from "./cursor.js";
 import { initMagnetic } from "./magnetic.js";
 import { initBlob } from "./blob.js";
+import { initAmbientGlows } from "./ambient-glows.js";
 import { initWorks } from "./works.js";
 import { initAnimations } from "./animations.js";
 import { initSmoothScroll } from "./smoothscroll.js";
@@ -27,6 +28,7 @@ async function boot() {
   initParticleFields();
   initCursor();
   initBlob();
+  initAmbientGlows();
   initMagnetic();
   initWorks();
   initAnimations();

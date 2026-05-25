@@ -148,8 +148,20 @@ export function initTimeline() {
   // element that's being moved by another tween (containerAnimation).
   // Triggers start BEFORE the card has fully entered the viewport so
   // users see content materialise as they scroll rather than after a
-  // long, empty pin moment. Combined with a quick reveal duration this
-  // keeps the user "with content" at all times.
+  // long, empty pin moment.
+  //
+  // CRITICAL: once: true + clearProps. The reveal fires ONLY the first
+  // time each card enters the viewport. Previously it used
+  // toggleActions: "play none none reverse" so scrolling back up
+  // reversed the entrance, and the next scroll-down replayed it. That
+  // meant every up-then-down cycle was re-animating opacity + scale + y
+  // on four children WHILE the parent track was translating, and the
+  // browser couldn't keep both transform animations coherent on every
+  // frame — visible as a stutter on the second pass.
+  // Now: first pass plays in, GSAP wipes all inline styles via
+  // clearProps so the cards are pure static elements, and subsequent
+  // passes are just the track's translateX moving them across — no
+  // per-child compositing work.
   nodes.forEach((node) => {
     gsap.from(node, {
       y: 40,
@@ -157,15 +169,13 @@ export function initTimeline() {
       scale: 0.94,
       duration: 0.55,
       ease: "power3.out",
+      clearProps: "transform,scale,opacity,y",
       scrollTrigger: {
         trigger: node,
         containerAnimation: horizontal,
-        // 110% = card's left edge is just past the right side of the
-        // viewport. By the time the card slides into view it's already
-        // mid-fade so it never appears "blank".
         start: "left 110%",
         end: "left 75%",
-        toggleActions: "play none none reverse",
+        once: true,
       },
     });
   });

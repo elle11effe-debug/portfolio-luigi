@@ -910,12 +910,56 @@ strong { font-weight: 700; color: var(--fg); }
 }
 .work:hover .work__media { opacity: 1; }
 
+/* Scanner-line hover effect on the floating preview image. The line is
+   pinned to the right edge of the clip-path reveal animation on
+   .work__image, so visually it looks like the beam is "drawing" the
+   artwork into existence as it sweeps left-to-right. Soft accent halo
+   trails it for a sci-fi handheld-scanner feel. */
+.work__media::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 94, 31, 0) 0%,
+    var(--accent) 14%,
+    var(--accent) 86%,
+    rgba(255, 94, 31, 0) 100%
+  );
+  box-shadow:
+    0 0 12px var(--accent),
+    0 0 30px var(--accent-glow),
+    0 0 60px rgba(255, 94, 31, 0.32);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  will-change: left, opacity;
+}
+.work:hover .work__media::after {
+  /* Same duration and easing as the image reveal above so the line stays
+     locked on the leading edge of the unmask throughout the sweep. */
+  animation: work-media-scan 1.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes work-media-scan {
+  0%   { left: 0%;    opacity: 0; }
+  6%   { opacity: 1; }
+  94%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
 .work__image {
   width: 100%; height: 100%;
   background: radial-gradient(circle at 50% 50%, var(--c1, #ff5e1f), var(--c2, #0a0604) 75%);
   transform: scale(1.1);
   transition: transform 0.6s var(--ease-out);
-  will-change: transform;
+  will-change: transform, clip-path;
+  /* The image starts fully clipped out to the right so the scanner line
+     can "draw" it in as it sweeps across (see .work__media::after below).
+     clip-path is animated to inset(0 0 0 0) in sync with the scanner. */
+  clip-path: inset(0 100% 0 0);
 }
 .work__image--photo {
   background-size: cover;
@@ -923,6 +967,13 @@ strong { font-weight: 700; color: var(--fg); }
   background-repeat: no-repeat;
 }
 .work:hover .work__image--photo { transform: scale(1.04); }
+.work:hover .work__image {
+  animation: work-image-reveal 1.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes work-image-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
 
 @media (max-width: 720px) {
   .work__link {

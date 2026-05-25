@@ -1497,6 +1497,8 @@ strong { font-weight: 700; color: var(--fg); }
   }
   .timeline__node-watermark { font-size: 6rem; bottom: -8px; }
 }
+
+/* =========================================================
    TOOLS & AI — pill grid (CV "Tools & AI" panel)
 ========================================================= */
 .tools {
@@ -1506,8 +1508,20 @@ strong { font-weight: 700; color: var(--fg); }
 
 .tools__grid {
   display: grid;
-  grid-template-columns: 1.1fr 2fr 0.9fr;
+  /* Two cards only — the previous 3-column grid (1.1fr 2fr 0.9fr) left
+     a phantom 22% empty column on the right when only two cards were
+     rendered. minmax(0, …) prevents min-content blowouts inside cells. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: 1.25rem;
+  /* Each card sizes to its own content height. Otherwise the AI card
+     stretches to match the taller Design tools one and shows a big
+     empty area below the pills on wide screens. */
+  align-items: start;
+  /* On 4K / ultrawide monitors the section would otherwise sprawl and
+     leave the few AI pills floating alone. Cap the row width and
+     centre it so the content stays composed. */
+  max-width: 1400px;
+  margin-inline: auto;
 }
 
 .tools__card {

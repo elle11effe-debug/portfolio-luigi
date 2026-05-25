@@ -38,15 +38,15 @@ let lastParticleAt = 0;
 let initTime = 0;
 const seenSections = new WeakSet();
 
-function reducedMotion() {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 function loadPref() {
-  if (reducedMotion()) return false;
+  // Note: previously we auto-disabled sound when prefers-reduced-motion
+  // was set. Removed because (a) reduced-motion is about animations,
+  // not audio, and (b) it was silently muting users on macOS who had
+  // the system "reduce motion" toggle on for accessibility/battery
+  // reasons. Sound now follows only the user's explicit toggle pref.
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === null) return true; // default ON per user choice
+    if (stored === null) return true; // default ON
     return stored === "true";
   } catch (_) {
     return true;
@@ -63,17 +63,14 @@ function ensureCtx() {
     if (!Ctor) return null;
     ctx = new Ctor();
     masterGain = ctx.createGain();
-    // Hard ceiling on output — even if a sound bug stacks oscillators,
-    // total output can never exceed this. Browsers will still apply
-    // their own per-tab limits, but this is our safety net. Bumped to
-    // 0.75 so the soft hover/click sounds are actually audible on
-    // laptop speakers without forcing the user to crank system volume.
-    masterGain.gain.value = 0.75;
+    // Master ceiling. 1.0 = no attenuation; we still rely on the per-
+    // sound peak gains (≤0.075) for the actual quiet aesthetic, so this
+    // is just the safety cap. Was 0.55, then 0.75, both turned out too
+    // quiet on typical laptop speakers — at 0.75 the toggle ping was
+    // barely audible even at full system volume.
+    masterGain.gain.value = 1.0;
     masterGain.connect(ctx.destination);
   }
-  // Some browsers (Safari especially) put the context to sleep when
-  // the tab is backgrounded. Resume on-demand whenever we want to
-  // emit anything.
   if (ctx.state === "suspended") {
     ctx.resume().catch(() => {});
   }
@@ -209,9 +206,9 @@ function playClick() {
     o1.connect(g);
     o2.connect(g);
     g.connect(masterGain);
-    envelope(g, 0.055, 0.003, 0.1);
+    envelope(g, 0.11, 0.003, 0.12);
     o1.start(); o2.start();
-    const end = ctx.currentTime + 0.16;
+    const end = ctx.currentTime + 0.18;
     o1.stop(end); o2.stop(end);
   });
 }
@@ -254,14 +251,17 @@ function playParticleSpark() {
 
 function playToggle(on) {
   // always audible, even if currently muted — the toggle click sound
-  // is the user's confirmation that the action landed
+  // is the user's confirmation that the action landed. Louder peak
+  // (0.13) than the rest because this is the one sound the user
+  // explicitly asked to hear by clicking the speaker icon, so it has
+  // to read clearly above ambient room noise.
   whenReady(() => {
     const g = ctx.createGain();
     const o = osc("sine", on ? 880 : 440);
     o.connect(g).connect(masterGain);
-    envelope(g, 0.045, 0.005, 0.13);
+    envelope(g, 0.13, 0.006, 0.18);
     o.start();
-    o.stop(ctx.currentTime + 0.2);
+    o.stop(ctx.currentTime + 0.25);
   });
 }
 

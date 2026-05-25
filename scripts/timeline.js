@@ -179,6 +179,17 @@ export function initTimeline() {
         start: "left 110%",
         end: "left 75%",
         once: true,
+        // Brief one-shot "ignition" flash when each card first
+        // crosses into the viewport during the horizontal pin: the
+        // CSS animation in main.css drives the warm bloom + accent
+        // halo decay. The setTimeout removes the class after the
+        // 1.4s keyframe finishes so it can never replay (and so
+        // hover styles take full control thereafter without the
+        // animation lingering underneath).
+        onEnter: () => {
+          node.classList.add("is-igniting");
+          setTimeout(() => node.classList.remove("is-igniting"), 1500);
+        },
       },
     });
   });

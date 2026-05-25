@@ -1840,6 +1840,10 @@ strong { font-weight: 700; color: var(--fg); }
   display: block;
   transition: transform 1.2s var(--ease-out);
 }
+/* During the GSAP cinematic reveal we drive transform directly from JS;
+   the CSS transition above would interpolate against GSAP's frame-by-frame
+   writes and make the animation feel rubbery. Disable it for the duration. */
+.case__gallery figure.is-revealing img { transition: none; }
 .case__gallery figure:hover img { transform: scale(1.035); }
 .case__gallery figure video {
   width: 100%;

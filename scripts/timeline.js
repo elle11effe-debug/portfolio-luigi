@@ -67,6 +67,12 @@ export function initTimeline() {
   // horizontal overflow inside the viewport. Computed in a function so
   // ScrollTrigger can re-measure on refresh (resize, font load, etc.).
   const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+  // Stretch factor: how many pixels of vertical scroll the user must
+  // travel for every pixel the track moves horizontally. 1 = a single
+  // swipe of the trackpad completes the whole journey (which felt rushed
+  // — users barely had time to read each card). 2 = the cinematic pinned
+  // moment lasts long enough to actually absorb the content.
+  const SCROLL_STRETCH = 2;
 
   // Defensive fallback: if for any reason the track fits inside the
   // viewport (ultrawide monitors, broken CSS, unusual zoom levels) the
@@ -104,23 +110,27 @@ export function initTimeline() {
   const horizontal = gsap.to(track, {
     x: () => -getDistance(),
     ease: "none",
+    // Force GSAP to use translate3d so the track is always promoted to
+    // its own GPU compositor layer. Without this, fast trackpad swipes
+    // can flicker as the browser tears down/rebuilds the layer when
+    // sub-pixel transforms cross integer boundaries.
+    force3D: true,
     scrollTrigger: {
       trigger: section,
       pin: true,
       pinSpacing: true,
-      // Snappier scrub keeps the track close to the user's scroll input
-      // so cards "respond" immediately instead of trailing the wheel.
-      scrub: 0.4,
-      // Pin engages when the timeline's top reaches 25% from the
-      // viewport top — i.e. the section sits comfortably in the
-      // middle-lower portion of the screen during the horizontal
-      // ride, with breathing room above. Previously we pinned at
-      // "top top+=80" (essentially flush to the navbar), so on large
-      // monitors the cards were already at the very top of the screen
-      // when they started moving, which felt rushed and made the
-      // content hard to read at eye level.
+      // scrub: 1 = the track smoothly catches up to the scroll position
+      // over ~1 second instead of snapping frame-by-frame. Combined with
+      // the SCROLL_STRETCH multiplier below, this turns abrupt trackpad
+      // input into a buttery horizontal glide. Previously scrub was 0.4
+      // (snappy + jittery on fast input).
+      scrub: 1,
       start: "top 25%",
-      end: () => `+=${getDistance()}`,
+      // Multiply the scroll-trigger length by SCROLL_STRETCH so a small
+      // trackpad swipe no longer races through all four cards. The track
+      // still only translates by getDistance() pixels — we're decoupling
+      // input distance from animation distance.
+      end: () => `+=${getDistance() * SCROLL_STRETCH}`,
       invalidateOnRefresh: true,
       anticipatePin: 1,
       onUpdate: (self) => {

@@ -65,8 +65,10 @@ function ensureCtx() {
     masterGain = ctx.createGain();
     // Hard ceiling on output — even if a sound bug stacks oscillators,
     // total output can never exceed this. Browsers will still apply
-    // their own per-tab limits, but this is our safety net.
-    masterGain.gain.value = 0.55;
+    // their own per-tab limits, but this is our safety net. Bumped to
+    // 0.75 so the soft hover/click sounds are actually audible on
+    // laptop speakers without forcing the user to crank system volume.
+    masterGain.gain.value = 0.75;
     masterGain.connect(ctx.destination);
   }
   // Some browsers (Safari especially) put the context to sleep when
@@ -76,6 +78,46 @@ function ensureCtx() {
     ctx.resume().catch(() => {});
   }
   return ctx;
+}
+
+/**
+ * Unlock the AudioContext on the very first user gesture anywhere on
+ * the page. Browsers (Chrome/Safari/Firefox) all refuse to let an
+ * AudioContext leave the "suspended" state until they've witnessed an
+ * explicit user gesture, but they're strict about *what* counts: hover
+ * doesn't count, scroll doesn't count, only pointerdown / touchstart /
+ * keydown. Without this, the first hover sound creates the context
+ * but resume() silently fails because the page hasn't received a
+ * qualifying gesture yet — and then every subsequent sound is
+ * scheduled into a context that's never been allowed to start, so the
+ * user hears nothing until they happen to click the toggle.
+ *
+ * This installs ONE listener per qualifying event type that runs
+ * exactly once, forces the context awake from inside the gesture
+ * stack frame, then disconnects.
+ */
+function attachUnlock() {
+  const unlock = () => {
+    ensureCtx();
+    // Defensive: some browsers need a tiny dummy buffer to fully
+    // commit the resume — schedule a silent node.
+    if (ctx && ctx.state !== "running") {
+      try {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        g.gain.value = 0.0001;
+        o.connect(g).connect(ctx.destination);
+        o.start();
+        o.stop(ctx.currentTime + 0.01);
+      } catch (_) {}
+    }
+    window.removeEventListener("pointerdown", unlock);
+    window.removeEventListener("touchstart", unlock);
+    window.removeEventListener("keydown", unlock);
+  };
+  window.addEventListener("pointerdown", unlock, { once: false });
+  window.addEventListener("touchstart", unlock, { once: false, passive: true });
+  window.addEventListener("keydown", unlock, { once: false });
 }
 
 /**
@@ -293,6 +335,10 @@ export function initSound() {
   toggleBtn = createToggle();
   if (!toggleBtn) return;
   updateToggleUI();
+
+  // Wire up the unlock listener BEFORE any other sound code runs so
+  // the very first gesture on the page primes the AudioContext.
+  attachUnlock();
 
   toggleBtn.addEventListener("click", (e) => {
     e.stopPropagation();

@@ -71,10 +71,13 @@ export function initTimeline() {
   // travel for every pixel the track moves horizontally. 1 = a single
   // trackpad swipe completes the whole journey (too rushed — users had
   // no time to read each card). Higher = the cinematic pinned moment
-  // lasts longer. 3.5 means a typical trackpad swipe (~400-500px)
-  // advances the timeline by roughly one card width, which feels
-  // intentional and gives ~3-4 swipes of room to enjoy the full journey.
-  const SCROLL_STRETCH = 3.5;
+  // lasts longer. 5 means a typical trackpad swipe advances the
+  // timeline by roughly half a card width, which forces the user to
+  // slow down and actually *read* each step. Combined with the extra
+  // trailing padding on the track (see CSS .timeline__track right
+  // padding) the last card now lingers comfortably centred in the
+  // viewport for a long beat before the scroll un-pins.
+  const SCROLL_STRETCH = 5;
 
   // Defensive fallback: if for any reason the track fits inside the
   // viewport (ultrawide monitors, broken CSS, unusual zoom levels) the

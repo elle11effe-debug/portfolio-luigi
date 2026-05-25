@@ -1315,12 +1315,18 @@ strong { font-weight: 700; color: var(--fg); }
   display: flex;
   flex-wrap: nowrap;
   gap: 2rem;
-  /* Inline padding lets the first and last nodes sit roughly at the
-     centre of the viewport at scroll start/end. Use a container-
-     relative percentage instead of vw so the math stays the same on
-     every monitor — vw made the padding balloon on ultrawide screens
-     until the track no longer overflowed the viewport. */
-  padding-inline: clamp(2rem, 12%, 8rem);
+  /* Asymmetric inline padding. The LEFT padding just needs to seat the
+     first card at a comfortable viewport offset so it's the first thing
+     the user sees when the pin engages. The RIGHT padding is much
+     bigger — it's the "linger zone" for the last card: with the track
+     fully translated, this extra trailing space means the final card
+     sits roughly centred in the viewport instead of being flush with
+     the right edge, so the user has a full beat to read it before the
+     scroll un-pins. The clamp() caps prevent ultrawide monitors from
+     pushing the right padding so far that the timeline no longer
+     overflows the viewport (which would no-op the horizontal scroll). */
+  padding-left: clamp(2rem, 12%, 8rem);
+  padding-right: clamp(8rem, 32%, 22rem);
   list-style: none;
   margin: 0;
   will-change: transform;

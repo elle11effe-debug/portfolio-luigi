@@ -111,7 +111,15 @@ export function initTimeline() {
       // Snappier scrub keeps the track close to the user's scroll input
       // so cards "respond" immediately instead of trailing the wheel.
       scrub: 0.4,
-      start: "top top+=80",   // leave room for the sticky nav
+      // Pin engages when the timeline's top reaches 25% from the
+      // viewport top — i.e. the section sits comfortably in the
+      // middle-lower portion of the screen during the horizontal
+      // ride, with breathing room above. Previously we pinned at
+      // "top top+=80" (essentially flush to the navbar), so on large
+      // monitors the cards were already at the very top of the screen
+      // when they started moving, which felt rushed and made the
+      // content hard to read at eye level.
+      start: "top 25%",
       end: () => `+=${getDistance()}`,
       invalidateOnRefresh: true,
       anticipatePin: 1,

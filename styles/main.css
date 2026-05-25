@@ -834,16 +834,26 @@ strong { font-weight: 700; color: var(--fg); }
 .work:hover .work__arrow { transform: translateX(0) rotate(-45deg); opacity: 1; color: var(--accent); }
 
 /* Work meta — orange always, with the same nav-style hover (lift + glow). */
+/* will-change is intentionally hover-scoped: applying it permanently on
+   every project's title / num / tags eagerly allocates 12+ compositor
+   layers at boot that the GPU then has to keep alive forever. With it
+   scoped to :hover, the browser only promotes the element while the user
+   is actively over it, freeing GPU memory the rest of the time. */
 .work__num,
 .work__title,
 .work__tags {
   color: var(--accent);
   display: inline-block;
-  will-change: transform;
   transition:
     transform 0.4s cubic-bezier(0.7, 0, 0.2, 1),
     text-shadow 0.4s ease,
     letter-spacing 0.4s ease;
+}
+
+.work:hover .work__num,
+.work:hover .work__title,
+.work:hover .work__tags {
+  will-change: transform;
 }
 
 .work__num {
@@ -992,8 +1002,8 @@ strong { font-weight: 700; color: var(--fg); }
   background: var(--bg-glass);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-card);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   box-shadow:
     0 1px 0 rgba(255, 200, 160, 0.04) inset,
     0 20px 60px rgba(0, 0, 0, 0.35);
@@ -1019,8 +1029,8 @@ strong { font-weight: 700; color: var(--fg); }
   border-radius: var(--radius-card);
   background: var(--bg-glass);
   border: 1px solid var(--line-strong);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   overflow: hidden;
   transition: border-color 0.4s var(--ease), transform 0.5s var(--ease-out), box-shadow 0.4s ease;
 }
@@ -1136,8 +1146,8 @@ strong { font-weight: 700; color: var(--fg); }
   border-radius: var(--radius-card);
   background: var(--bg-glass);
   border: 1px solid var(--line-strong);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   transition: border-color 0.4s ease, background 0.4s ease;
 }
 .about__block:hover { border-color: var(--accent); }
@@ -1185,8 +1195,8 @@ strong { font-weight: 700; color: var(--fg); }
   border-radius: var(--radius-card);
   background: var(--bg-glass);
   border: 1px solid var(--line-strong);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
 }
 .about__meta h5 {
   font-family: var(--font-mono);
@@ -1324,8 +1334,8 @@ strong { font-weight: 700; color: var(--fg); }
   border-radius: var(--radius-card);
   background: var(--bg-glass);
   border: 1px solid var(--line-strong);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -1544,8 +1554,8 @@ strong { font-weight: 700; color: var(--fg); }
   border-radius: var(--radius-card);
   background: var(--bg-glass);
   border: 1px solid var(--line-strong);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   transition: border-color 0.4s ease, transform 0.4s var(--ease-out);
 }
 .tools__card:hover {
@@ -1743,8 +1753,8 @@ strong { font-weight: 700; color: var(--fg); }
   letter-spacing: 0.16em;
   color: rgba(255, 255, 255, 0.92);
   background: rgba(10, 6, 4, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -2182,8 +2192,8 @@ strong { font-weight: 700; color: var(--fg); }
   letter-spacing: 0.16em;
   color: rgba(255, 255, 255, 0.92);
   background: rgba(10, 6, 4, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 0.45rem 0.8rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.08);

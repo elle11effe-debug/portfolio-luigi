@@ -113,6 +113,12 @@ export function initAnimations() {
         duration: 1.05,
         ease: "power3.out",
         delay: baseDelay + index * 0.08,
+        // clearProps releases the inline styles GSAP wrote (transform,
+        // clip-path, plus any compositor layer the browser promoted for
+        // them). Without this, every revealed image keeps an inline
+        // matrix3d transform forever, which (a) blocks CSS :hover
+        // transitions and (b) holds GPU memory on long case-study pages.
+        clearProps: "clipPath,transform,scale",
         scrollTrigger: { trigger: fig, start: "top 88%", once: true },
         onStart: () => fig.classList.add("is-revealing"),
         onComplete: () => fig.classList.remove("is-revealing"),
@@ -126,6 +132,7 @@ export function initAnimations() {
         duration: 0.7,
         ease: "power3.out",
         delay: baseDelay + index * 0.08 + 0.4,
+        clearProps: "transform,opacity",
         scrollTrigger: { trigger: fig, start: "top 88%", once: true },
       });
     }
@@ -139,6 +146,7 @@ export function initAnimations() {
       scale: 1.18,
       duration: 1.35,
       ease: "power3.out",
+      clearProps: "clipPath,transform,scale",
       scrollTrigger: { trigger: el, start: "top 92%", once: true },
     });
   });

@@ -57,18 +57,27 @@ export function initAmbientGlows() {
   window.addEventListener("scroll", markStale, { passive: true });
 
   function tick(now) {
+    if (document.hidden) {
+      requestAnimationFrame(tick);
+      return;
+    }
     if (rectsStale) {
       for (const s of state) s.rect = s.el.getBoundingClientRect();
       rectsStale = false;
     }
 
+    const vh = window.innerHeight;
+
     for (const s of state) {
-      // Autonomous drift around the anchor point.
+      // Skip glows that are well outside the viewport — they wouldn't
+      // be visible anyway, so spending math + a style write on them
+      // is wasted work. The 200px slack keeps the animation continuous
+      // for glows about to enter the viewport.
+      if (s.rect.bottom < -200 || s.rect.top > vh + 200) continue;
+
       const offsetX = Math.sin(now * s.driftSpeedX + s.driftPhaseX) * DRIFT_X;
       const offsetY = Math.cos(now * s.driftSpeedY + s.driftPhaseY) * DRIFT_Y;
 
-      // Proximity uses the *current* visible centre so the brighten effect
-      // always lines up with where the glow actually is on screen.
       const cx = s.rect.left + s.rect.width / 2 + offsetX;
       const cy = s.rect.top + s.rect.height / 2 + offsetY;
       const dx = mouseX - cx;

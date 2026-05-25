@@ -4,13 +4,38 @@ export function initParticles() {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (reduce) { canvas.style.display = "none"; return; }
 
+  // Device capability detection — older / lower-end machines were
+  // dropping framerate from the combined load of 80 particles +
+  // mouse-distance math + shadowBlur per frame. We scale (and
+  // optionally disable) the particle count based on what the device
+  // tells us about itself. Most browsers report deviceMemory in GB
+  // (Chrome/Edge), and hardwareConcurrency for CPU thread count.
+  // Safari/Firefox don't expose deviceMemory, so we fall back on
+  // hardwareConcurrency only and assume a healthy baseline.
+  const cores = navigator.hardwareConcurrency || 4;
+  const memGB = navigator.deviceMemory; // undefined on Safari/Firefox
+
+  // Disable entirely on very weak devices (< 2GB RAM or 2 cores).
+  // The site stays beautiful — the particles are an embellishment.
+  if ((memGB !== undefined && memGB < 2) || cores < 2) {
+    canvas.style.display = "none";
+    return;
+  }
+
   const ctx = canvas.getContext("2d", { alpha: true });
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let w = 0, h = 0;
   let particles = [];
   let mouseX = -1000, mouseY = -1000;
 
-  const COUNT_BASE = 80;
+  // Three-tier base count: 80 on healthy laptops/desktops, 50 on
+  // mid-range, 30 on low-power. Multiplied by a viewport-width
+  // density factor inside initParticleArray().
+  let COUNT_BASE = 80;
+  const isLowEnd  = (memGB !== undefined && memGB <= 4) || cores <= 4;
+  const isMidTier = (memGB !== undefined && memGB <= 6) || cores <= 6;
+  if (isLowEnd) COUNT_BASE = 30;
+  else if (isMidTier) COUNT_BASE = 50;
 
   const resize = () => {
     w = window.innerWidth;
@@ -51,6 +76,13 @@ export function initParticles() {
 
   let last = performance.now();
   const tick = (now) => {
+    // Skip the entire frame budget when the tab is hidden — no point
+    // burning CPU on a canvas the user can't see.
+    if (document.hidden) {
+      last = now;
+      requestAnimationFrame(tick);
+      return;
+    }
     const dt = Math.min(50, now - last);
     last = now;
     ctx.clearRect(0, 0, w, h);

@@ -198,8 +198,18 @@ function createScene(canvas, options = {}) {
   const clock = new THREE.Clock();
   let rotationBase = 0;
   let frameId = null;
+  // Each Three.js scene has its own visibility flag. The IntersectionObserver
+  // below flips it as the canvas enters/leaves the viewport. While the
+  // canvas is off-screen we stop scheduling rAF entirely — rendering 7000
+  // GPU particles when nobody can see them is wasted work and the #1
+  // reason the contact-section scene used to burn battery on every page.
+  let inView = false;
 
   function animate() {
+    if (document.hidden || !inView) {
+      frameId = null;
+      return;
+    }
     const dt = clock.getDelta();
     const t = clock.elapsedTime;
 
@@ -224,13 +234,34 @@ function createScene(canvas, options = {}) {
 
     frameId = requestAnimationFrame(animate);
   }
-  frameId = requestAnimationFrame(animate);
+
+  const startLoop = () => {
+    if (!frameId) {
+      // Reset clock delta so we don't get a giant catch-up jump after
+      // a long pause (e.g. user scrolled away for 10 seconds).
+      clock.getDelta();
+      frameId = requestAnimationFrame(animate);
+    }
+  };
+
+  const io = new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    if (inView) startLoop();
+  }, { rootMargin: "200px" });
+  io.observe(canvas);
+
+  const onVisibility = () => {
+    if (!document.hidden && inView) startLoop();
+  };
+  document.addEventListener("visibilitychange", onVisibility);
 
   return {
     destroy() {
       if (frameId) cancelAnimationFrame(frameId);
       ro.disconnect();
+      io.disconnect();
       window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("visibilitychange", onVisibility);
       geometry.dispose();
       material.dispose();
       renderer.dispose();

@@ -21,8 +21,19 @@ export function initHeroPortrait() {
   }
 
   let last = -1;
+  // Once the user has scrolled past the fade distance, the portrait
+  // opacity is locked at MAX_OPACITY and never changes again until
+  // they scroll back to top. While in that "locked" state we can
+  // safely skip the rAF loop entirely. An IntersectionObserver wakes
+  // the loop back up when the hero re-enters the viewport.
+  let inView = true;
+  let rafId = 0;
 
   function tick() {
+    if (document.hidden || !inView) {
+      rafId = 0;
+      return;
+    }
     const scrollY = window.scrollY || window.pageYOffset || 0;
     const viewport = window.innerHeight || 800;
     const progress = Math.min(1, Math.max(0, scrollY / (viewport * FADE_DISTANCE)));
@@ -31,8 +42,23 @@ export function initHeroPortrait() {
       portrait.style.opacity = next;
       last = next;
     }
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
   }
 
-  requestAnimationFrame(tick);
+  const startLoop = () => {
+    if (!rafId) rafId = requestAnimationFrame(tick);
+  };
+
+  const heroSection = portrait.closest("section") || portrait;
+  const io = new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    if (inView) startLoop();
+  }, { rootMargin: "150px" });
+  io.observe(heroSection);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && inView) startLoop();
+  });
+
+  startLoop();
 }

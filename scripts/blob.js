@@ -32,6 +32,14 @@ export function initBlob() {
   }, { passive: true });
 
   function render(now) {
+    // Skip work when the tab isn't visible. The browser already
+    // throttles rAF in background tabs but the math + DOM write is
+    // still scheduled, so this short-circuit is essentially free
+    // when the user is away.
+    if (document.hidden) {
+      requestAnimationFrame(render);
+      return;
+    }
     const w = window.innerWidth;
     const h = window.innerHeight;
 

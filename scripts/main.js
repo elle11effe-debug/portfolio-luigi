@@ -15,6 +15,7 @@ import { initLightbox } from "./lightbox.js";
 import { initHeroPortrait } from "./hero-portrait.js";
 import { initCaseCover } from "./case-cover.js";
 import { initTimeline } from "./timeline.js";
+import { initSound } from "./sound.js";
 import { initI18n } from "./i18n.js";
 
 async function boot() {
@@ -37,6 +38,7 @@ async function boot() {
   initHeroPortrait();
   initCaseCover();
   initTimeline();
+  initSound();
 
   // Text-reading modules (scramble/flip/particle-text) need the localised
   // copy in place before they capture it, so they wait for i18n.

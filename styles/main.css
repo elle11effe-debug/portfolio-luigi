@@ -2829,6 +2829,142 @@ li:hover > .flip .flip__inner {
 }
 
 /* =========================================================
+   SOUND TOGGLE — floating speaker bubble, sister of lang-toggle
+   ----------------------------------------------------------
+   Reuses the lang-toggle visual language verbatim: same 66px
+   bubble, same pulsing accent aura, same hover-warm, same
+   slide-swap "current ↔ target" face. Both bubbles sit in the
+   bottom-right corner so they read as a unified preferences
+   cluster rather than two competing focal points.
+
+   Reuses the @keyframes from the lang-toggle (lang-bubble-float
+   and lang-bubble-pulse) since CSS keyframes are global; no
+   need to duplicate animation declarations.
+========================================================= */
+.sound-toggle {
+  position: fixed;
+  bottom: 2rem;
+  /* Just left of the lang-toggle: 66px width + 0.9rem gap. */
+  right: calc(2rem + 66px + 0.9rem);
+  z-index: 200;
+  width: 66px;
+  height: 66px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.sound-toggle__bubble {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 11, 8, 0.32);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  box-shadow:
+    0 24px 60px -16px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  /* Same drift cadence as the lang-toggle, with a 1.5s delay so
+     the two bubbles aren't perfectly in sync (would look glued). */
+  animation: lang-bubble-float 6s ease-in-out infinite -1.5s;
+  transition:
+    background 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+  will-change: transform;
+}
+.sound-toggle__bubble::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 138, 61, 0.55) 0%,
+    rgba(255, 138, 61, 0.18) 45%,
+    rgba(255, 138, 61, 0) 72%
+  );
+  pointer-events: none;
+  z-index: -1;
+  /* Phase-shifted aura so the two toggles' pulses don't lock together. */
+  animation: lang-bubble-pulse 2.6s ease-in-out infinite -0.8s;
+  will-change: opacity, transform;
+}
+.sound-toggle:hover .sound-toggle__bubble::before {
+  animation-duration: 1.4s;
+  background: radial-gradient(
+    circle,
+    rgba(255, 138, 61, 0.8) 0%,
+    rgba(255, 138, 61, 0.3) 50%,
+    rgba(255, 138, 61, 0) 75%
+  );
+}
+.sound-toggle:hover .sound-toggle__bubble {
+  background: rgba(255, 138, 61, 0.18);
+  border-color: rgba(255, 138, 61, 0.32);
+  box-shadow:
+    0 28px 80px -16px rgba(255, 138, 61, 0.45),
+    0 0 0 1px rgba(255, 138, 61, 0.28) inset,
+    0 0 48px rgba(255, 138, 61, 0.32);
+}
+
+.sound-toggle__face {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+.sound-toggle__icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  transition:
+    transform 0.4s var(--ease-out),
+    opacity 0.35s ease,
+    color 0.35s ease;
+}
+.sound-toggle__icon svg { display: block; }
+
+/* Default (sound ON, no .is-muted): ON icon is current, OFF is target. */
+.sound-toggle__icon--on  { transform: translateY(0);    opacity: 1; }
+.sound-toggle__icon--off { transform: translateY(120%); opacity: 0; color: var(--bg); }
+
+/* Hovering while ON → preview the MUTE state. */
+.sound-toggle:hover .sound-toggle__icon--on  { transform: translateY(-120%); opacity: 0; }
+.sound-toggle:hover .sound-toggle__icon--off { transform: translateY(0);     opacity: 1; color: var(--fg); }
+
+/* Muted state (.is-muted): roles flip — OFF is current, ON is target. */
+.sound-toggle.is-muted .sound-toggle__icon--on  { transform: translateY(120%); opacity: 0; color: var(--bg); }
+.sound-toggle.is-muted .sound-toggle__icon--off { transform: translateY(0);    opacity: 1; color: var(--fg); }
+
+/* Hovering while MUTED → preview the ON state. */
+.sound-toggle.is-muted:hover .sound-toggle__icon--on  { transform: translateY(0);     opacity: 1; color: var(--fg); }
+.sound-toggle.is-muted:hover .sound-toggle__icon--off { transform: translateY(-120%); opacity: 0; }
+
+@media (max-width: 760px) {
+  .sound-toggle {
+    width: 56px;
+    height: 56px;
+    bottom: 1.25rem;
+    /* Match the smaller lang-toggle (56px) + gap on mobile. */
+    right: calc(1.25rem + 56px + 0.6rem);
+  }
+  .sound-toggle__face { width: 22px; height: 22px; }
+  .sound-toggle__icon svg { width: 22px; height: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sound-toggle__bubble,
+  .sound-toggle__bubble::before { animation: none; }
+}
+
+/* =========================================================
    REDUCED MOTION
 ========================================================= */
 @media (prefers-reduced-motion: reduce) {

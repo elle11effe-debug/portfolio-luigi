@@ -55,6 +55,12 @@ export function initParticles() {
     last = now;
     ctx.clearRect(0, 0, w, h);
 
+    // Per-frame guard: only emit one particle-spark sound per tick
+    // even if many particles fall inside the cursor radius. The
+    // sound module also throttles, so this is just to avoid wasting
+    // call overhead inside the hot 60fps loop.
+    let sparkedThisFrame = false;
+
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
 
@@ -70,6 +76,12 @@ export function initParticles() {
         const force = (1 - dist / radius) * 0.6;
         p.x += (dx / dist) * force * 1.4;
         p.y += (dy / dist) * force * 1.4;
+        // Bright particles getting really close to the cursor emit a
+        // tiny sonic spark. The sound module rate-limits this further.
+        if (!sparkedThisFrame && p.isBright && force > 0.45 && window.__playParticleSpark) {
+          sparkedThisFrame = true;
+          window.__playParticleSpark();
+        }
       }
 
       if (p.x < -10) p.x = w + 10;

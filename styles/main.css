@@ -1326,7 +1326,7 @@ strong { font-weight: 700; color: var(--fg); }
      pushing the right padding so far that the timeline no longer
      overflows the viewport (which would no-op the horizontal scroll). */
   padding-left: clamp(2rem, 12%, 8rem);
-  padding-right: clamp(8rem, 32%, 22rem);
+  padding-right: clamp(14rem, 48%, 36rem);
   list-style: none;
   margin: 0;
   will-change: transform;

@@ -1175,6 +1175,10 @@ strong { font-weight: 700; color: var(--fg); }
   grid-template-columns: 1fr 1fr;
   gap: 0.9rem;
   margin-top: 0.3rem;
+  /* Mirror the timeline cap so the meta strip doesn't sprawl to the
+     edges of ultrawide monitors while the timeline above sits centred. */
+  max-width: 1400px;
+  margin-inline: auto;
 }
 .about__meta > div {
   padding: 1.1rem 1.2rem;
@@ -1225,6 +1229,15 @@ strong { font-weight: 700; color: var(--fg); }
   position: relative;
   margin-bottom: 3rem;
   padding-block: 1rem 0;
+  /* On ultrawide / 4K monitors the section would otherwise be so wide
+     that the 4 cards fit inside it without horizontal overflow. With
+     no overflow, GSAP has zero distance to scrub through and the pin
+     ends up no-oping — cards 3 & 4 stay hidden because their reveal
+     trigger never enters the (non-moving) container animation. Cap the
+     timeline width so we always have a predictable amount of horizontal
+     scroll regardless of monitor size. */
+  max-width: 1400px;
+  margin-inline: auto;
 }
 
 .timeline__header {
@@ -1292,10 +1305,12 @@ strong { font-weight: 700; color: var(--fg); }
   display: flex;
   flex-wrap: nowrap;
   gap: 2rem;
-  /* Inline padding lets the first and last nodes sit at the centre
-     of the viewport at scroll start/end (instead of being stuck to
-     the visible edges). */
-  padding-inline: max(18vw, 4rem);
+  /* Inline padding lets the first and last nodes sit roughly at the
+     centre of the viewport at scroll start/end. Use a container-
+     relative percentage instead of vw so the math stays the same on
+     every monitor — vw made the padding balloon on ultrawide screens
+     until the track no longer overflowed the viewport. */
+  padding-inline: clamp(2rem, 12%, 8rem);
   list-style: none;
   margin: 0;
   will-change: transform;

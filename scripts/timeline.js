@@ -68,6 +68,37 @@ export function initTimeline() {
   // ScrollTrigger can re-measure on refresh (resize, font load, etc.).
   const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
 
+  // Defensive fallback: if for any reason the track fits inside the
+  // viewport (ultrawide monitors, broken CSS, unusual zoom levels) the
+  // pin would no-op and cards 3 & 4 would stay invisible forever. Fall
+  // back to a vertical stagger reveal in that case so users still get
+  // all four cards even without the cinematic horizontal scroll.
+  if (getDistance() < 50) {
+    nodes.forEach((node, i) => {
+      gsap.from(node, {
+        y: 40,
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.75,
+        delay: i * 0.1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: section, start: "top 75%", once: true },
+      });
+    });
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top 75%",
+      end: "bottom 25%",
+      scrub: 0.5,
+      onUpdate: (self) => {
+        if (progressBar) {
+          progressBar.style.setProperty("--timeline-progress", `${self.progress * 100}%`);
+        }
+      },
+    });
+    return;
+  }
+
   // The pin sits on the SECTION, not the whole `.about`, so the page
   // header + intro scroll past normally and only the timeline locks.
   const horizontal = gsap.to(track, {

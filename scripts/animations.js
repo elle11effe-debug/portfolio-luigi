@@ -61,7 +61,7 @@ export function initAnimations() {
     });
   });
 
-  gsap.utils.toArray(".about__intro, .about__side").forEach((el) => {
+  gsap.utils.toArray(".about__intro").forEach((el) => {
     gsap.from(el, {
       y: 60,
       opacity: 0,

@@ -14,6 +14,7 @@ import { initParticleText } from "./particle-text.js";
 import { initLightbox } from "./lightbox.js";
 import { initHeroPortrait } from "./hero-portrait.js";
 import { initCaseCover } from "./case-cover.js";
+import { initTimeline } from "./timeline.js";
 import { initI18n } from "./i18n.js";
 
 async function boot() {
@@ -35,6 +36,7 @@ async function boot() {
   initLightbox();
   initHeroPortrait();
   initCaseCover();
+  initTimeline();
 
   // Text-reading modules (scramble/flip/particle-text) need the localised
   // copy in place before they capture it, so they wait for i18n.

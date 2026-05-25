@@ -1206,7 +1206,297 @@ strong { font-weight: 700; color: var(--fg); }
   .about__meta { grid-template-columns: 1fr; }
 }
 
+/* Intro paragraph is now standalone (no longer in a 2-col grid),
+   so we constrain its width for readability. */
+.about__intro {
+  max-width: 760px;
+  margin-bottom: 4rem;
+}
+
 /* =========================================================
+   ABOUT — Horizontal-scroll cinematic timeline
+   ----------------------------------------------------------
+   Layout: section header → intro → pinned timeline (horizontal
+   scroll via GSAP) → meta footer. On mobile the pin is bypassed
+   and the track stacks vertically (see media query at the end).
+========================================================= */
+
+.about__timeline {
+  position: relative;
+  margin-bottom: 3rem;
+  padding-block: 1rem 0;
+}
+
+.timeline__header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.timeline__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-grey);
+  white-space: nowrap;
+}
+.timeline__label .dot { width: 7px; height: 7px; }
+
+.timeline__progress {
+  flex: 1;
+  position: relative;
+  height: 2px;
+  min-width: 0;
+}
+.timeline__progress-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.08);
+}
+.timeline__progress-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--timeline-progress, 0%);
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* The "viewport" is the visible window; the track inside is wider
+   than this and translates horizontally during pinned scroll. */
+.timeline__viewport {
+  position: relative;
+  overflow: hidden;
+  padding-block: 1.5rem;
+  /* Subtle fade-out on both edges so cards don't visually clip
+     hard against the viewport limits. */
+  -webkit-mask-image: linear-gradient(90deg,
+    transparent 0,
+    #000 5%,
+    #000 95%,
+    transparent 100%);
+          mask-image: linear-gradient(90deg,
+    transparent 0,
+    #000 5%,
+    #000 95%,
+    transparent 100%);
+}
+
+.timeline__track {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2rem;
+  /* Inline padding lets the first and last nodes sit at the centre
+     of the viewport at scroll start/end (instead of being stuck to
+     the visible edges). */
+  padding-inline: max(18vw, 4rem);
+  list-style: none;
+  margin: 0;
+  will-change: transform;
+}
+
+.timeline__node {
+  position: relative;
+  flex: 0 0 340px;
+  min-height: 460px;
+  padding: 1.6rem 1.6rem 1.5rem;
+  border-radius: var(--radius-card);
+  background: var(--bg-glass);
+  border: 1px solid var(--line-strong);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow: hidden;
+  transition: border-color 0.4s ease, transform 0.4s ease;
+  will-change: transform, opacity;
+}
+.timeline__node:hover { border-color: var(--accent); }
+
+/* Huge translucent year baked into the card as a watermark
+   for depth + a "year tag" reading without taking grid space. */
+.timeline__node-watermark {
+  position: absolute;
+  bottom: -28px;
+  right: -8px;
+  font-family: var(--font-display);
+  font-size: 11rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.035);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.timeline__node-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+  flex-shrink: 0;
+}
+.timeline__node-dot--active {
+  animation: timeline-dot-pulse 2.4s ease-in-out infinite;
+}
+@keyframes timeline-dot-pulse {
+  0%, 100% { box-shadow: 0 0 16px var(--accent-glow); transform: scale(1); }
+  50%      { box-shadow: 0 0 30px var(--accent-glow); transform: scale(1.18); }
+}
+
+.timeline__node-year {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+.timeline__node-company {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.timeline__node-company .t-grey {
+  color: var(--fg-grey);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.timeline__node-role {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--fg-grey);
+  margin: 0;
+}
+
+.timeline__node-desc {
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.timeline__node-milestones {
+  margin: 0.3rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.timeline__node-milestones li {
+  font-size: 0.82rem;
+  color: var(--fg-grey);
+  line-height: 1.45;
+  padding-left: 1rem;
+  position: relative;
+}
+.timeline__node-milestones li::before {
+  content: "";
+  position: absolute;
+  left: 0.05rem;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.85;
+}
+
+.timeline__node--now {
+  border-color: rgba(255, 138, 61, 0.45);
+  background:
+    linear-gradient(180deg, rgba(255, 138, 61, 0.08), transparent 65%),
+    var(--bg-glass);
+}
+
+.timeline__node-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.2rem;
+  background: var(--accent);
+  color: #0a0604;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.timeline__node-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+
+/* Mobile fallback: no pin, no horizontal translation. The track
+   stacks vertically with a left-aligned timeline rail that runs
+   through the dots, giving a classic CV-style timeline that works
+   without scroll-jacking. */
+@media (max-width: 900px) {
+  .about__timeline { margin-bottom: 2.5rem; }
+
+  .timeline__header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .timeline__progress { width: 100%; }
+
+  .timeline__viewport {
+    overflow: visible;
+    padding-block: 1rem 0;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+
+  .timeline__track {
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-inline: 0;
+    padding-left: 1.5rem;
+    transform: none !important;
+    position: relative;
+  }
+  /* Vertical rail running down the left side, behind the cards. */
+  .timeline__track::before {
+    content: "";
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 1px;
+    background: linear-gradient(180deg,
+      var(--accent) 0%,
+      rgba(255, 138, 61, 0.3) 30%,
+      rgba(255, 255, 255, 0.08) 100%);
+  }
+  .timeline__node {
+    flex: none;
+    width: 100%;
+    min-height: auto;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .timeline__node-watermark { font-size: 6rem; bottom: -8px; }
+}
    TOOLS & AI — pill grid (CV "Tools & AI" panel)
 ========================================================= */
 .tools {

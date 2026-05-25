@@ -108,7 +108,9 @@ export function initTimeline() {
       trigger: section,
       pin: true,
       pinSpacing: true,
-      scrub: 0.6,
+      // Snappier scrub keeps the track close to the user's scroll input
+      // so cards "respond" immediately instead of trailing the wheel.
+      scrub: 0.4,
       start: "top top+=80",   // leave room for the sticky nav
       end: () => `+=${getDistance()}`,
       invalidateOnRefresh: true,
@@ -124,18 +126,25 @@ export function initTimeline() {
   // Per-node entrance — uses the horizontal animation as the trigger
   // container so GSAP knows how to compute the "viewport entry" of an
   // element that's being moved by another tween (containerAnimation).
+  // Triggers start BEFORE the card has fully entered the viewport so
+  // users see content materialise as they scroll rather than after a
+  // long, empty pin moment. Combined with a quick reveal duration this
+  // keeps the user "with content" at all times.
   nodes.forEach((node) => {
     gsap.from(node, {
-      y: 50,
+      y: 40,
       opacity: 0,
-      scale: 0.92,
-      duration: 0.8,
+      scale: 0.94,
+      duration: 0.55,
       ease: "power3.out",
       scrollTrigger: {
         trigger: node,
         containerAnimation: horizontal,
-        start: "left 85%",
-        end: "left 50%",
+        // 110% = card's left edge is just past the right side of the
+        // viewport. By the time the card slides into view it's already
+        // mid-fade so it never appears "blank".
+        start: "left 110%",
+        end: "left 75%",
         toggleActions: "play none none reverse",
       },
     });

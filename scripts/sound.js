@@ -63,11 +63,6 @@ function ensureCtx() {
     if (!Ctor) return null;
     ctx = new Ctor();
     masterGain = ctx.createGain();
-    // Master ceiling. 1.0 = no attenuation; we still rely on the per-
-    // sound peak gains (≤0.075) for the actual quiet aesthetic, so this
-    // is just the safety cap. Was 0.55, then 0.75, both turned out too
-    // quiet on typical laptop speakers — at 0.75 the toggle ping was
-    // barely audible even at full system volume.
     masterGain.gain.value = 1.0;
     masterGain.connect(ctx.destination);
   }
@@ -78,16 +73,10 @@ function ensureCtx() {
 }
 
 /**
- * Run `fn` once the AudioContext is guaranteed to be in the "running"
- * state. The whole point: ctx.resume() is asynchronous, so on the very
- * first click anywhere on the page the context goes from "suspended"
- * to "running" only AFTER the promise resolves. If we just synchronously
- * schedule an oscillator inside a fresh suspended-then-resuming context,
- * the schedule lands in dead air and the user hears nothing — which is
- * exactly why the first toggle click used to be silent and only the
- * second one was audible. With this helper, the first sound the user
- * triggers waits for the resume handshake and then plays, so they hear
- * confirmation on the very first interaction.
+ * Run `fn` once the AudioContext is guaranteed to be running.
+ * ctx.resume() is async — without this helper, the first scheduled
+ * oscillator lands in a context still mid-handshake and produces no
+ * audible output.
  */
 function whenReady(fn) {
   if (!ensureCtx()) return;
@@ -96,43 +85,42 @@ function whenReady(fn) {
 }
 
 /**
- * Unlock the AudioContext on the very first user gesture anywhere on
- * the page. Browsers (Chrome/Safari/Firefox) all refuse to let an
- * AudioContext leave the "suspended" state until they've witnessed an
- * explicit user gesture, but they're strict about *what* counts: hover
- * doesn't count, scroll doesn't count, only pointerdown / touchstart /
- * keydown. Without this, the first hover sound creates the context
- * but resume() silently fails because the page hasn't received a
- * qualifying gesture yet — and then every subsequent sound is
- * scheduled into a context that's never been allowed to start, so the
- * user hears nothing until they happen to click the toggle.
+ * Unlock the AudioContext on the very first user gesture.
  *
- * This installs ONE listener per qualifying event type that runs
- * exactly once, forces the context awake from inside the gesture
- * stack frame, then disconnects.
+ * Browsers refuse to let an AudioContext leave "suspended" until they
+ * see an explicit user gesture (pointerdown / touchstart / keydown).
+ * The well-known reliable unlock pattern is to play a 1-sample SILENT
+ * AudioBufferSourceNode inside the gesture frame — this forces the
+ * context's "running" state in a way that calling resume() alone
+ * doesn't always achieve (especially on Safari iOS / Safari macOS).
+ *
+ * The listener stays attached forever (instead of once-only) because:
+ * - on iOS Safari the context can drift back to "interrupted" when
+ *   the user moves away from the tab; every new pointerdown gives us
+ *   a chance to re-unlock cheaply.
+ * - on Chrome the silent buffer is essentially free after the first
+ *   real unlock, so the cost of leaving the listener attached is
+ *   negligible.
+ *
+ * Uses capture phase so this runs BEFORE any other click handlers
+ * (including the toggle's), guaranteeing the context is awake by the
+ * time their downstream sound calls fire.
  */
 function attachUnlock() {
-  const unlock = () => {
-    ensureCtx();
-    // Defensive: some browsers need a tiny dummy buffer to fully
-    // commit the resume — schedule a silent node.
-    if (ctx && ctx.state !== "running") {
-      try {
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        g.gain.value = 0.0001;
-        o.connect(g).connect(ctx.destination);
-        o.start();
-        o.stop(ctx.currentTime + 0.01);
-      } catch (_) {}
-    }
-    window.removeEventListener("pointerdown", unlock);
-    window.removeEventListener("touchstart", unlock);
-    window.removeEventListener("keydown", unlock);
+  const silentUnlock = () => {
+    const c = ensureCtx();
+    if (!c) return;
+    try {
+      const buffer = c.createBuffer(1, 1, 22050);
+      const source = c.createBufferSource();
+      source.buffer = buffer;
+      source.connect(c.destination);
+      source.start(0);
+    } catch (_) { /* some browsers throw if buffer creation fails — ignore */ }
   };
-  window.addEventListener("pointerdown", unlock, { once: false });
-  window.addEventListener("touchstart", unlock, { once: false, passive: true });
-  window.addEventListener("keydown", unlock, { once: false });
+  document.addEventListener("pointerdown", silentUnlock, { capture: true });
+  document.addEventListener("touchstart", silentUnlock, { capture: true, passive: true });
+  document.addEventListener("keydown", silentUnlock, { capture: true });
 }
 
 /**
@@ -376,8 +364,16 @@ export function initSound() {
     enabled = !enabled;
     savePref(enabled);
     updateToggleUI();
-    // Always emit the toggle sound so the user knows the click landed
-    // (even when they're muting — last sound before silence).
+
+    // The toggle click IS a qualifying user gesture, so we go through
+    // the full unlock + play sequence right here, synchronously,
+    // before yielding control back to the browser. The silentUnlock
+    // listener also fires (capture phase) just before this handler,
+    // so by the time we get here the context is already creating its
+    // first buffer. We still go through whenReady to be safe in case
+    // the context is mid-resume — playToggle will defer to the
+    // resume promise if needed but in practice fires immediately on
+    // browsers where the buffer-source trick succeeded.
     playToggle(enabled);
   });
 

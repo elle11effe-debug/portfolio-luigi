@@ -2253,11 +2253,13 @@ strong { font-weight: 700; color: var(--fg); }
 /* =========================================================
    SCRAMBLE TEXT
 ========================================================= */
-[data-scramble] {
+[data-scramble],
+[data-scramble-once] {
   display: inline-block;
   transition: color 0.25s ease, text-shadow 0.25s ease;
 }
-[data-scramble].is-scrambling {
+[data-scramble].is-scrambling,
+[data-scramble-once].is-scrambling {
   color: var(--accent) !important;
   text-shadow: 0 0 32px var(--accent-glow), 0 0 4px var(--accent);
 }

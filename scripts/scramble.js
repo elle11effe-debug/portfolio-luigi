@@ -107,4 +107,40 @@ export function initScramble() {
     };
     setTimeout(ping, 8000);
   }
+
+  // [data-scramble-once] elements scramble every time they enter the
+  // viewport — the attribute name is legacy from when it triggered once.
+  // The observer fires on threshold crossings (35%), not continuously,
+  // and Scrambler.run() is a no-op if a scramble is already in flight, so
+  // rapid in/out scrolls can't compound or break the animation.
+  // Words inside the same parent are auto-staggered so multi-word headers
+  // read like a typewriter cascade rather than triggering in unison.
+  const onceItems = document.querySelectorAll("[data-scramble-once]");
+  if (onceItems.length && "IntersectionObserver" in window) {
+    onceItems.forEach((el) => {
+      if (!el.__scrambler) {
+        // speed < 1 slows the scramble down, so short words like "Su" or
+        // "I miei" stay visibly noisy long enough for the reveal to read.
+        el.__scrambler = new Scrambler(el, { bindHover: false, speed: 0.55 });
+      }
+    });
+
+    // Pre-compute each element's order within its parent so siblings can
+    // share a staggered start without the observer doing extra work.
+    const stagger = new WeakMap();
+    onceItems.forEach((el) => {
+      const siblings = Array.from(el.parentElement?.querySelectorAll("[data-scramble-once]") || []);
+      stagger.set(el, siblings.indexOf(el));
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const delay = (stagger.get(entry.target) || 0) * 160;
+        setTimeout(() => entry.target.__scrambler?.run(), delay);
+      });
+    }, { threshold: 0.35 });
+
+    onceItems.forEach((el) => observer.observe(el));
+  }
 }

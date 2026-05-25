@@ -69,10 +69,12 @@ export function initTimeline() {
   const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
   // Stretch factor: how many pixels of vertical scroll the user must
   // travel for every pixel the track moves horizontally. 1 = a single
-  // swipe of the trackpad completes the whole journey (which felt rushed
-  // — users barely had time to read each card). 2 = the cinematic pinned
-  // moment lasts long enough to actually absorb the content.
-  const SCROLL_STRETCH = 2;
+  // trackpad swipe completes the whole journey (too rushed — users had
+  // no time to read each card). Higher = the cinematic pinned moment
+  // lasts longer. 3.5 means a typical trackpad swipe (~400-500px)
+  // advances the timeline by roughly one card width, which feels
+  // intentional and gives ~3-4 swipes of room to enjoy the full journey.
+  const SCROLL_STRETCH = 3.5;
 
   // Defensive fallback: if for any reason the track fits inside the
   // viewport (ultrawide monitors, broken CSS, unusual zoom levels) the

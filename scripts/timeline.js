@@ -63,10 +63,17 @@ export function initTimeline() {
   }
 
   // ----- Desktop: pinned horizontal scroll ---------------------------
-  // The scroll distance the user must travel is roughly the amount of
-  // horizontal overflow inside the viewport. Computed in a function so
-  // ScrollTrigger can re-measure on refresh (resize, font load, etc.).
-  const getDistance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+  // Scroll until the LAST card reaches its resting position — not until
+  // the full track (incl. trailing padding) has cleared. Otherwise the
+  // huge right padding reads as "more content this way" even when the
+  // pin is done.
+  const getDistance = () => {
+    const last = nodes[nodes.length - 1];
+    if (!last) return Math.max(0, track.scrollWidth - viewport.clientWidth);
+    const lastCenter = last.offsetLeft + last.offsetWidth / 2;
+    const target = viewport.clientWidth / 2;
+    return Math.max(0, lastCenter - target);
+  };
   // Stretch factor: how many pixels of vertical scroll the user must
   // travel for every pixel the track moves horizontally. 1 = a single
   // trackpad swipe completes the whole journey (too rushed). Higher =
@@ -74,8 +81,8 @@ export function initTimeline() {
   // scroll per card on a typical laptop, which forces the user to
   // really slow down and read each step — combined with the extra
   // trailing padding (CSS .timeline__track right padding) the last
-  // card now lingers comfortably centred in the viewport with several
-  // beats of room before the scroll un-pins.
+  // card lingers in its final centred position for several beats of
+  // vertical scroll before the pin releases (no empty trail to the right).
   const SCROLL_STRETCH = 7;
 
   // Defensive fallback: if for any reason the track fits inside the

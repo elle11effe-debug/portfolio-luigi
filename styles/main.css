@@ -597,19 +597,12 @@ strong { font-weight: 700; color: var(--fg); }
   z-index: 2;
 }
 
-/* Medium screens (laptop): anchor portrait to top-right and let it
-   grow large enough that its left edge crosses into the title area.
-   Because .hero__portrait sits at z-index:1 and .hero__title at z-index:2,
-   the title always reads cleanly on top and the photo becomes a soft
-   layered backdrop that "emerges" from behind the typography. */
-@media (min-width: 901px) and (max-width: 1400px) {
+/* Desktop: anchor portrait beside the wordmark (not bottom-right).
+   z-index keeps the title readable on top of the soft photo layer. */
+@media (min-width: 901px) {
   .hero__portrait {
     top: 8rem;
     bottom: auto;
-    /* Cuddle the right edge of the viewport a bit harder than the
-       default container gutter, so the extra width can spread leftward
-       into the LUIGI / FRANCO words instead of being absorbed on the
-       right margin. */
     right: max(calc(var(--container) * 0.4), 0.5rem);
     width: clamp(420px, 48vw, 620px);
     height: clamp(520px, 86vh, 740px);
@@ -620,11 +613,19 @@ strong { font-weight: 700; color: var(--fg); }
   .hero__portrait::before {
     height: 10%;
   }
-  /* On laptops the photo is top-anchored so its natural bottom edge falls
-     inside the container — push the fade up so it always covers the cut. */
   .hero__portrait::after {
     height: 60%;
     background: linear-gradient(180deg, rgba(10, 6, 4, 0) 0%, var(--bg) 55%, var(--bg) 100%);
+  }
+}
+
+/* Large / ultrawide: pull the portrait left so it stays near the name
+   instead of drifting to the far viewport edge. */
+@media (min-width: 1401px) {
+  .hero__portrait {
+    right: clamp(10rem, 18vw, 22rem);
+    width: clamp(460px, 40vw, 680px);
+    height: clamp(560px, 88vh, 820px);
   }
 }
 
@@ -1361,18 +1362,11 @@ strong { font-weight: 700; color: var(--fg); }
   display: flex;
   flex-wrap: nowrap;
   gap: 2rem;
-  /* Asymmetric inline padding. The LEFT padding just needs to seat the
-     first card at a comfortable viewport offset so it's the first thing
-     the user sees when the pin engages. The RIGHT padding is much
-     bigger — it's the "linger zone" for the last card: with the track
-     fully translated, this extra trailing space means the final card
-     sits roughly centred in the viewport instead of being flush with
-     the right edge, so the user has a full beat to read it before the
-     scroll un-pins. The clamp() caps prevent ultrawide monitors from
-     pushing the right padding so far that the timeline no longer
-     overflows the viewport (which would no-op the horizontal scroll). */
+  /* Symmetric padding seats the first card on entry; the last card's
+     end position is driven by JS (scroll until centred), not by trailing
+     empty track — avoids implying more cards off-screen to the right. */
   padding-left: clamp(2rem, 12%, 8rem);
-  padding-right: clamp(18rem, 65%, 50rem);
+  padding-right: clamp(2rem, 12%, 8rem);
   list-style: none;
   margin: 0;
   will-change: transform;

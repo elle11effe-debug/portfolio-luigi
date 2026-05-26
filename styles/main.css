@@ -1902,17 +1902,34 @@ strong { font-weight: 700; color: var(--fg); }
   position: absolute;
   top: 2%;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.32em;
-  color: rgba(255, 255, 255, 0.16);
+  /* Bumped from rgba 0.16 → fg-grey so the cluster headings are
+     legible at a glance without an explicit hover, while still
+     reading as "label" rather than primary content. The accent
+     dot ties them to the rest of the section's typography. */
+  color: var(--fg-grey);
   pointer-events: none;
   user-select: none;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: opacity 0.4s ease, color 0.3s ease;
+}
+.universe__label::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 .universe__label--design { left: 5%; }
 .universe__label--ai { right: 5%; }
-.universe.is-focused .universe__label { opacity: 0.5; transition: opacity 0.4s ease; }
+.universe__label--ai::before { order: 2; }
+.universe.is-focused .universe__label { opacity: 0.6; }
 
 .universe__node {
   position: absolute;

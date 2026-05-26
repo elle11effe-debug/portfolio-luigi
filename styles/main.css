@@ -1010,6 +1010,52 @@ strong { font-weight: 700; color: var(--fg); }
 }
 
 /* =========================================================
+   MANIFESTO — Breathing room between the About climax and the
+   Stats / Works showcase. Two lines of display type on a wide
+   field of negative space. No glow, no particles, no decoration.
+   The contrast against the loud sections is the design.
+========================================================= */
+.manifesto {
+  position: relative;
+  z-index: 2;
+  /* Roughly 2× the standard section gap on the y-axis so the
+     reader exits the timeline cinematic, lands in silence, and
+     only then meets the stats. */
+  padding: clamp(7rem, 13vh, 13rem) var(--container);
+  display: flex;
+  align-items: center;
+  /* Asymmetric anchor: text reads like an epigraph rather than
+     a centered slogan. */
+  justify-content: flex-start;
+}
+
+.manifesto__text {
+  max-width: 1080px;
+  margin: 0;
+  font-family: var(--font-display, "Inter", system-ui, sans-serif);
+  font-size: clamp(2rem, 4.4vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.manifesto__line {
+  display: block;
+}
+
+.manifesto__line--secondary { color: var(--fg-grey); }
+.manifesto__line--primary   { color: var(--fg); }
+
+@media (max-width: 720px) {
+  .manifesto {
+    padding-block: clamp(5rem, 16vh, 10rem);
+  }
+  .manifesto__text {
+    font-size: clamp(1.7rem, 8vw, 2.6rem);
+  }
+}
+
+/* =========================================================
    STATS — Impact numbers (cards from the CV "Impact Numbers" block)
 ========================================================= */
 .stats {

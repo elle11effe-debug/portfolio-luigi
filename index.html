@@ -362,28 +362,85 @@
         </h2>
       </header>
 
-      <div class="tools__grid">
-        <article class="tools__card">
-          <h4><i class="dot"></i> <span data-i18n="tools.design_tools_label">Design tools</span></h4>
-          <ul class="tools__icons" role="list">
-            <li><img src="assets/tools/ai.png" alt="Adobe Illustrator" loading="lazy" decoding="async" width="291" height="291" /></li>
-            <li><img src="assets/tools/ps.png" alt="Adobe Photoshop" loading="lazy" decoding="async" width="291" height="291" /></li>
-            <li><img src="assets/tools/pr.png" alt="Adobe Premiere Pro" loading="lazy" decoding="async" width="291" height="291" /></li>
-            <li><img src="assets/tools/ae.png" alt="Adobe After Effects" loading="lazy" decoding="async" width="291" height="291" /></li>
-            <li><img src="assets/tools/id.png" alt="Adobe InDesign" loading="lazy" decoding="async" width="291" height="291" /></li>
-            <li><img src="assets/tools/figma.png" alt="Figma" loading="lazy" decoding="async" width="292" height="292" /></li>
-          </ul>
-        </article>
-        <article class="tools__card">
-          <h4><i class="dot"></i> <span data-i18n="tools.ai_label">AI Generative</span></h4>
-          <ul class="tools__pills" role="list">
-            <li>Runway</li><li>HeyGen</li><li>Suno</li><li>Flux</li>
-            <li>Nano Banana Pro 2</li>
-            <li class="tools__pills-break" aria-hidden="true"></li>
-            <li>Seedance 2</li><li>Magnific</li>
-            <li>Cursor</li><li>ElevenLabs</li>
-          </ul>
-        </article>
+      <div class="universe" data-tools-universe>
+        <!-- Connection lines drawn between cluster nodes by tools-universe.js -->
+        <svg class="universe__connections" aria-hidden="true"></svg>
+
+        <!-- Cluster headings — sit faded in the background like distant constellation labels -->
+        <span class="universe__label universe__label--design" aria-hidden="true" data-i18n="tools.design_tools_label">Design</span>
+        <span class="universe__label universe__label--ai" aria-hidden="true" data-i18n="tools.ai_label">AI</span>
+
+        <!-- Design tool nodes (left half of the universe) -->
+        <button type="button" class="universe__node universe__node--design" data-tool="figma" data-x="22" data-y="20" data-size="md" style="--glow: 162, 89, 255;" aria-describedby="universe-readout">
+          <span class="universe__node-tile">
+            <img src="assets/tools/figma.png" alt="" loading="lazy" decoding="async" width="292" height="292" />
+          </span>
+          <span class="universe__node-name">Figma</span>
+        </button>
+        <button type="button" class="universe__node universe__node--design" data-tool="ai" data-x="11" data-y="42" data-size="lg" style="--glow: 255, 154, 0;" aria-describedby="universe-readout">
+          <span class="universe__node-tile">
+            <img src="assets/tools/ai.png" alt="" loading="lazy" decoding="async" width="291" height="291" />
+          </span>
+          <span class="universe__node-name">Illustrator</span>
+        </button>
+        <button type="button" class="universe__node universe__node--design" data-tool="ps" data-x="32" data-y="56" data-size="lg" style="--glow: 49, 168, 255;" aria-describedby="universe-readout">
+          <span class="universe__node-tile">
+            <img src="assets/tools/ps.png" alt="" loading="lazy" decoding="async" width="291" height="291" />
+          </span>
+          <span class="universe__node-name">Photoshop</span>
+        </button>
+        <button type="button" class="universe__node universe__node--design" data-tool="pr" data-x="44" data-y="32" data-size="md" style="--glow: 234, 119, 255;" aria-describedby="universe-readout">
+          <span class="universe__node-tile">
+            <img src="assets/tools/pr.png" alt="" loading="lazy" decoding="async" width="291" height="291" />
+          </span>
+          <span class="universe__node-name">Premiere</span>
+        </button>
+        <button type="button" class="universe__node universe__node--design" data-tool="ae" data-x="14" data-y="74" data-size="md" style="--glow: 200, 162, 255;" aria-describedby="universe-readout">
+          <span class="universe__node-tile">
+            <img src="assets/tools/ae.png" alt="" loading="lazy" decoding="async" width="291" height="291" />
+          </span>
+          <span class="universe__node-name">After Effects</span>
+        </button>
+        <button type="button" class="universe__node universe__node--design" data-tool="id" data-x="38" data-y="82" data-size="sm" style="--glow: 255, 51, 102;" aria-describedby="universe-readout">
+          <span class="universe__node-tile">
+            <img src="assets/tools/id.png" alt="" loading="lazy" decoding="async" width="291" height="291" />
+          </span>
+          <span class="universe__node-name">InDesign</span>
+        </button>
+
+        <!-- AI tool nodes (right half) — text badges with consistent warm tone -->
+        <button type="button" class="universe__node universe__node--ai" data-tool="cursor" data-x="56" data-y="14" data-size="md" aria-describedby="universe-readout">
+          <span class="universe__node-text">Cursor</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="runway" data-x="68" data-y="26" data-size="md" aria-describedby="universe-readout">
+          <span class="universe__node-text">Runway</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="heygen" data-x="86" data-y="18" data-size="sm" aria-describedby="universe-readout">
+          <span class="universe__node-text">HeyGen</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="elevenlabs" data-x="92" data-y="36" data-size="sm" aria-describedby="universe-readout">
+          <span class="universe__node-text">ElevenLabs</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="nano" data-x="76" data-y="48" data-size="sm" aria-describedby="universe-readout">
+          <span class="universe__node-text">Nano Banana</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="suno" data-x="58" data-y="56" data-size="sm" aria-describedby="universe-readout">
+          <span class="universe__node-text">Suno</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="magnific" data-x="93" data-y="62" data-size="sm" aria-describedby="universe-readout">
+          <span class="universe__node-text">Magnific</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="flux" data-x="68" data-y="70" data-size="md" aria-describedby="universe-readout">
+          <span class="universe__node-text">Flux</span>
+        </button>
+        <button type="button" class="universe__node universe__node--ai" data-tool="seedance" data-x="83" data-y="82" data-size="sm" aria-describedby="universe-readout">
+          <span class="universe__node-text">Seedance</span>
+        </button>
+
+        <!-- Readout: persistent description bar that updates with active node -->
+        <div class="universe__readout" id="universe-readout" aria-live="polite">
+          <span class="universe__readout-default" data-i18n="tools.universe_default">Passa sui tool per esplorare il mio stack</span>
+        </div>
       </div>
     </section>
 

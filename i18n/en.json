@@ -91,8 +91,9 @@
     "index": "03 · Tools & AI stack",
     "title_w1": "Creative",
     "title_w2": "stack.",
-    "design_tools_label": "Design tools",
-    "ai_label": "Generative AI"
+    "design_tools_label": "Design",
+    "ai_label": "AI",
+    "universe_default": "Hover any tool to explore my stack"
   },
   "contact": {
     "index": "04 · Contact",

@@ -1852,6 +1852,270 @@ strong { font-weight: 700; color: var(--fg); }
 }
 
 /* =========================================================
+   TOOLS · UNIVERSE
+   Constellation-style interactive layout. Each tool is a node
+   absolutely positioned via data-x / data-y percentages on a
+   canvas-like container; the SVG behind them holds connection
+   lines drawn between commonly-paired tools (workflows). Hover
+   a node and it lights up with its brand glow, every connected
+   node also brightens, lines on the same edge ignite, all
+   un-related nodes dim — readout below updates with a one-line
+   description in the user's voice ("what I use it for").
+========================================================= */
+.universe {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 1rem auto 0;
+  /* Aspect ratio shapes the constellation. 1.7:1 keeps the
+     cluster wider than tall, so connection lines can spread
+     horizontally without nodes piling up vertically. */
+  aspect-ratio: 1.7 / 1;
+  min-height: 460px;
+  /* Capped on tall portrait viewports so the universe never
+     stretches into a giant void. */
+  max-height: 680px;
+  isolation: isolate;
+}
+
+.universe__connections {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 0;
+}
+.universe__connections line {
+  stroke: rgba(255, 200, 160, 0.07);
+  stroke-width: 1;
+  transition: stroke 0.4s ease, stroke-width 0.4s ease, filter 0.4s ease;
+}
+.universe__connections line.is-lit {
+  stroke: rgba(255, 138, 61, 0.85);
+  stroke-width: 1.4;
+  filter: drop-shadow(0 0 5px rgba(255, 94, 31, 0.7));
+}
+
+.universe__label {
+  position: absolute;
+  top: 2%;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: rgba(255, 255, 255, 0.16);
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+.universe__label--design { left: 5%; }
+.universe__label--ai { right: 5%; }
+.universe.is-focused .universe__label { opacity: 0.5; transition: opacity 0.4s ease; }
+
+.universe__node {
+  position: absolute;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: none;
+  /* Magnetic drift + hover lift composed into one transform via
+     CSS variables so transitions on transform affect both
+     simultaneously without conflict. */
+  transform: translate(
+    calc(-50% + var(--drift-x, 0px)),
+    calc(-50% + var(--drift-y, 0px) + var(--lift, 0px))
+  );
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.35s ease;
+  z-index: 2;
+  /* Fade out unrelated nodes on focus — handled by .is-dimmed
+     class added by JS. Default state full opacity. */
+  opacity: 1;
+}
+.universe__node.is-dimmed { opacity: 0.22; }
+.universe__node:hover, .universe__node:focus-visible { --lift: -6px; }
+.universe__node.is-active { --lift: -8px; z-index: 3; }
+.universe__node:focus-visible { outline: none; }
+
+/* ---------- Design nodes: glass-tile + image silhouette ---------- */
+.universe__node--design {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  /* Tile size driven by data-size for visual hierarchy. lg = the
+     tools the designer reaches for daily, sm = supporting. */
+  --node-tile: 92px;
+}
+.universe__node--design[data-size="sm"] { --node-tile: 74px; }
+.universe__node--design[data-size="md"] { --node-tile: 86px; }
+.universe__node--design[data-size="lg"] { --node-tile: 98px; }
+
+.universe__node-tile {
+  width: var(--node-tile);
+  height: var(--node-tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.universe__node-tile img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+  display: block;
+  opacity: 0.82;
+  transition: opacity 0.35s ease, filter 0.4s ease;
+}
+.universe__node:hover .universe__node-tile img,
+.universe__node:focus-visible .universe__node-tile img,
+.universe__node.is-active .universe__node-tile img {
+  opacity: 1;
+  filter:
+    brightness(1.35)
+    drop-shadow(0 0 1px rgba(var(--glow), 1))
+    drop-shadow(0 0 6px rgba(var(--glow), 0.85))
+    drop-shadow(0 0 18px rgba(var(--glow), 0.5))
+    drop-shadow(0 0 32px rgba(var(--glow), 0.25));
+}
+.universe__node--design[data-tool="figma"]:hover .universe__node-tile img,
+.universe__node--design[data-tool="figma"].is-active .universe__node-tile img {
+  /* Figma is multi-coloured, so we layer the five logo hues
+     concentrically (matches the existing tool-icon hover). */
+  filter:
+    brightness(1.35)
+    drop-shadow(0 0 1px rgba(242, 78, 30, 1))
+    drop-shadow(0 0 3px rgba(255, 114, 98, 0.9))
+    drop-shadow(0 0 7px rgba(162, 89, 255, 0.7))
+    drop-shadow(0 0 14px rgba(26, 188, 254, 0.5))
+    drop-shadow(0 0 24px rgba(10, 207, 131, 0.3));
+}
+
+.universe__node-name {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+.universe__node:hover .universe__node-name,
+.universe__node:focus-visible .universe__node-name,
+.universe__node.is-active .universe__node-name,
+.universe__node.is-connected .universe__node-name {
+  opacity: 1;
+  color: rgb(var(--glow, 255, 200, 160));
+}
+
+/* ---------- AI nodes: text-badge tiles ---------- */
+.universe__node--ai {
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  background: rgba(20, 11, 8, 0.65);
+  border: 1px solid rgba(255, 200, 160, 0.18);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  --glow: 255, 138, 61;
+}
+.universe__node--ai[data-size="md"] { font-size: 12px; padding: 0.65rem 1.15rem; }
+.universe__node--ai .universe__node-text { display: inline-block; }
+.universe__node--ai:hover,
+.universe__node--ai:focus-visible,
+.universe__node--ai.is-active {
+  background: rgba(255, 94, 31, 0.18);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 94, 31, 0.18),
+    0 0 24px rgba(255, 94, 31, 0.32);
+}
+.universe__node--ai.is-connected {
+  border-color: rgba(255, 138, 61, 0.55);
+  color: rgba(255, 220, 200, 0.9);
+}
+
+/* ---------- Persistent readout below the cluster ---------- */
+.universe__readout {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  width: max-content;
+  max-width: 92%;
+  min-height: 1.5em;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+.universe__readout strong {
+  color: var(--accent);
+  font-weight: 600;
+  margin-right: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+.universe__readout-default {
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+}
+
+/* ---------- Mobile fallback ----------
+   Below 900px the constellation interaction collapses (no hover,
+   absolute positioning would overflow). We switch to a clean
+   stacked grid so the same content is still readable; the
+   universe JS detects the breakpoint and skips its setup. */
+@media (max-width: 900px) {
+  .universe {
+    aspect-ratio: auto;
+    min-height: 0;
+    max-height: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-bottom: 0;
+  }
+  .universe__connections,
+  .universe__label { display: none; }
+  .universe__node {
+    position: static;
+    transform: none;
+    cursor: default;
+  }
+  .universe__node--design {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+  .universe__node--design .universe__node-tile { --node-tile: 56px; }
+  .universe__node--design .universe__node-name {
+    opacity: 1;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .universe__node--ai { align-self: flex-start; }
+  .universe__readout {
+    position: static;
+    transform: none;
+    margin-top: 1rem;
+  }
+}
+
+/* =========================================================
    BRANDS IN MOTION
 ========================================================= */
 .brands-motion {

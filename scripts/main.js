@@ -15,6 +15,7 @@ import { initLightbox } from "./lightbox.js";
 import { initHeroPortrait } from "./hero-portrait.js";
 import { initCaseCover } from "./case-cover.js";
 import { initTimeline } from "./timeline.js";
+import { initToolsUniverse } from "./tools-universe.js";
 import { initSound } from "./sound.js";
 import { initI18n } from "./i18n.js";
 
@@ -38,6 +39,7 @@ async function boot() {
   initHeroPortrait();
   initCaseCover();
   initTimeline();
+  initToolsUniverse();
   initSound();
 
   // Text-reading modules (scramble/flip/particle-text) need the localised

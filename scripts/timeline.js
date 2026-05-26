@@ -84,6 +84,14 @@ export function initTimeline() {
   // card lingers in its final centred position for several beats of
   // vertical scroll before the pin releases (no empty trail to the right).
   const SCROLL_STRETCH = 7;
+  // Extra vertical scroll while the last card stays centred and the
+  // track no longer moves — eases the jump back to normal page scroll.
+  const LINGER_VH = 0.45;
+
+  const dampExitScroll = () => {
+    const lenis = window.__lenis;
+    if (lenis && "velocity" in lenis) lenis.velocity = 0;
+  };
 
   // Defensive fallback: if for any reason the track fits inside the
   // viewport (ultrawide monitors, broken CSS, unusual zoom levels) the
@@ -118,38 +126,47 @@ export function initTimeline() {
 
   // The pin sits on the SECTION, not the whole `.about`, so the page
   // header + intro scroll past normally and only the timeline locks.
-  const horizontal = gsap.to(track, {
-    x: () => -getDistance(),
-    ease: "none",
-    // Force GSAP to use translate3d so the track is always promoted to
-    // its own GPU compositor layer. Without this, fast trackpad swipes
-    // can flicker as the browser tears down/rebuilds the layer when
-    // sub-pixel transforms cross integer boundaries.
-    force3D: true,
+  //
+  // Timeline = horizontal travel + linger hold on the last card. Without
+  // the linger segment, horizontal finishes but the pin stays active with
+  // a 7× scroll ratio — then unpin feels like the page "accelerates".
+  const distance = getDistance();
+  const lingerPx = window.innerHeight * LINGER_VH;
+  const horizontalPx = distance * SCROLL_STRETCH;
+  const totalPx = horizontalPx + lingerPx;
+  const hDur = horizontalPx / totalPx;
+
+  const horizontal = gsap.timeline({
     scrollTrigger: {
       trigger: section,
       pin: true,
       pinSpacing: true,
-      // scrub: 1 = the track smoothly catches up to the scroll position
-      // over ~1 second instead of snapping frame-by-frame. Combined with
-      // the SCROLL_STRETCH multiplier below, this turns abrupt trackpad
-      // input into a buttery horizontal glide. Previously scrub was 0.4
-      // (snappy + jittery on fast input).
       scrub: 1,
       start: "top 25%",
-      // Multiply the scroll-trigger length by SCROLL_STRETCH so a small
-      // trackpad swipe no longer races through all four cards. The track
-      // still only translates by getDistance() pixels — we're decoupling
-      // input distance from animation distance.
-      end: () => `+=${getDistance() * SCROLL_STRETCH}`,
+      end: () => `+=${getDistance() * SCROLL_STRETCH + window.innerHeight * LINGER_VH}`,
       invalidateOnRefresh: true,
       anticipatePin: 1,
+      onLeave: dampExitScroll,
+      onLeaveBack: dampExitScroll,
       onUpdate: (self) => {
         if (progressBar) {
           progressBar.style.setProperty("--timeline-progress", `${self.progress * 100}%`);
         }
       },
     },
+  });
+
+  horizontal.to(track, {
+    x: -distance,
+    ease: "none",
+    force3D: true,
+    duration: hDur,
+  });
+  horizontal.to(track, {
+    x: -distance,
+    ease: "none",
+    force3D: true,
+    duration: 1 - hDur,
   });
 
   // Per-node entrance — uses the horizontal animation as the trigger

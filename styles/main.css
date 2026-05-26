@@ -1788,8 +1788,14 @@ strong { font-weight: 700; color: var(--fg); }
 .tools__icons li:nth-child(6) { --glow: 162, 89, 255; }   /* Figma purple */
 .tools__icons li:hover { transform: translateY(-4px); }
 .tools__icons img {
-  width: 78%;
-  height: 78%;
+  /* Sized as a percentage of each cell so the icons keep relative
+     proportions on different viewports, then capped via max-width
+     so they never grow past a reasonable on-screen size (~64px)
+     even when the card itself stretches on wide monitors. */
+  width: 62%;
+  height: 62%;
+  max-width: 64px;
+  max-height: 64px;
   object-fit: contain;
   display: block;
   opacity: 0.85;

@@ -1678,18 +1678,17 @@ strong { font-weight: 700; color: var(--fg); }
 
 .tools__grid {
   display: grid;
-  /* Two cards only — the previous 3-column grid (1.1fr 2fr 0.9fr) left
-     a phantom 22% empty column on the right when only two cards were
-     rendered. minmax(0, …) prevents min-content blowouts inside cells. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  /* Equal-width columns so the two cards read as a balanced pair
+     instead of the previous 1:2 split that made Design tools look
+     cramped next to the wider AI card. minmax(0, …) prevents min-
+     content blowouts inside cells. align-items: stretch (the grid
+     default — we no longer override it) makes the two cards match
+     heights, so they form a clean rectangular block. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.25rem;
-  /* Each card sizes to its own content height. Otherwise the AI card
-     stretches to match the taller Design tools one and shows a big
-     empty area below the pills on wide screens. */
-  align-items: start;
-  /* On 4K / ultrawide monitors the section would otherwise sprawl and
-     leave the few AI pills floating alone. Cap the row width and
-     centre it so the content stays composed. */
+  /* On 4K / ultrawide monitors the section would otherwise sprawl
+     and leave the content floating. Cap the row width and centre
+     it so the cards stay composed. */
   max-width: 1400px;
   margin-inline: auto;
 }
@@ -1701,7 +1700,20 @@ strong { font-weight: 700; color: var(--fg); }
   border: 1px solid var(--line-strong);
   backdrop-filter: blur(10px) saturate(140%);
   -webkit-backdrop-filter: blur(10px) saturate(140%);
+  /* Flex column lets the inner content (icons / pills) breathe and
+     centre vertically inside the now equal-height cards, so neither
+     side looks "top-heavy" against an empty bottom. */
+  display: flex;
+  flex-direction: column;
   transition: border-color 0.4s ease, transform 0.4s var(--ease-out);
+}
+/* The body content of each card grows to fill the vertical space the
+   stretched grid gives us, then centres its children — works for both
+   the icon grid and the pill rows so both cards feel composed. */
+.tools__card > .tools__icons,
+.tools__card > .tools__pills {
+  flex: 1;
+  align-content: center;
 }
 .tools__card:hover {
   border-color: var(--accent);
@@ -1766,6 +1778,13 @@ strong { font-weight: 700; color: var(--fg); }
   grid-template-columns: repeat(3, 1fr);
   gap: 0.85rem;
   margin-top: 0.25rem;
+  /* Constrain the icon grid so it doesn't sprawl across the full
+     width of the (now wider) Design tools card — keeping the icons
+     compact and centred reads as intentional grouping, vs spread-
+     out icons that would look like dropouts on a sparse plane. */
+  max-width: 360px;
+  margin-inline: auto;
+  width: 100%;
 }
 .tools__icons li {
   display: flex;
